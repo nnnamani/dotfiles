@@ -188,7 +188,7 @@ zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline)
 
 
-if [ -x ~/.zshrc_local ]; then
+if [ -e ~/.zshrc_local ]; then
     source ~/.zshrc_local
 fi
 
