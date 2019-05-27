@@ -92,8 +92,6 @@ alias mch='sshfs conoha:/home/nnnamani ~/conoha/nnnamani'
 alias cdch='cd ~/conoha/nnnamani'
 alias firefox="open /Applications/Firefox.app"
 
-. /Users/mani/.nix-profile/etc/profile.d/nix.sh
-
 # backspace,deleteキーを使えるように
 stty erase ^H
 bindkey "^[[3~" delete-char
@@ -144,8 +142,6 @@ bindkey '^r' peco-select-history
 autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
-#bindkey "^p" history-beginning-search-backward-end
-#bindkey "^b" history-beginning-search-forward-end
 
 # cdrコマンドを有効 ログアウトしても有効なディレクトリ履歴
 # cdr タブでリストを表示
@@ -169,17 +165,6 @@ function mkcd() {
   fi
 }
 
-# make conoha repos
-function mkgitrepos() {
-    SERVER="conoha"
-    REPOS_ROOT="/home/nnnamani/git"
-    ssh $SERVER "mkdir -p ${REPOS_ROOT}/${1} && cd ${REPOS_ROOT}/${1} && git init --bare --share"
-    echo "create new repository."
-    echo "=>  $SERVER:${REPOS_ROOT}/${1}"
-}
-
-
-
 # Ruby
 export PATH=$HOME/.rbenv/bin:$PATH
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
@@ -201,6 +186,12 @@ zplug zsh-users/zsh-syntax-highlighting
 
 zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline)
+
+
+if [ -x ~/.zshrc_local ]; then
+    source ~/.zshrc_local
+fi
+
 
 # install zsh plugins with zplug.
 if ! zplug check --verbose; then

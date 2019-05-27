@@ -22,6 +22,8 @@ if [ "$(uname)" == 'Darwin' ]; then
 
     install_with_brew zsh
     #TODO: install_with_brew zplug
+    install_with_brew tmux
     install_with_brew ghq
     install_with_brew hub
 fi
+
