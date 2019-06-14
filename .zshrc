@@ -4,13 +4,13 @@ alias tma='tmux attach-sessio -t $(tmsessions)'
 alias tms='tmux switch-client -t $(tmsessions)'
 alias tmk='tmux kill-session -t $(tmsessions)'
 
-if [ $SHLVL = 1 ]; then
-    if [ $(tmux list-sessions | awk -F':' '{print $1}' | wc -l | awk '{print $1}') -eq 0 ]; then
-        tmux
-    else
-        tma
-    fi
-fi
+# if [ $SHLVL = 1 ]; then
+#     if [ $(tmux list-sessions | awk -F':' '{print $1}' | wc -l | awk '{print $1}') -eq 0 ]; then
+#         tmux
+#     else
+#         tma
+#     fi
+# fi
 
 export TERM="xterm-256color"
 export ZPLUG_HOME=/usr/local/opt/zplug
@@ -82,7 +82,7 @@ alias back='pushd'
 alias diff='diff -U1'
 alias sz='source ~/.zshrc'
 alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
-alias julia='/Applications/Julia-1.0.app/Contents/Resources/julia/bin/julia'
+alias julia='/Applications/Julia-1.1.app/Contents/Resources/julia/bin/julia'
 alias gpg="LANG=en_US.utf-8 gpg"
 alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 alias enable_mac_keyboard="sudo kextload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
@@ -202,3 +202,4 @@ if ! zplug check --verbose; then
 fi
 
 zplug load
+export PATH=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/usr/local/Cellar/zplug/2.4.2/bin:/usr/local/opt/zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:~/.roswell/bin
