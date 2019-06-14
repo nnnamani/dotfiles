@@ -25,5 +25,6 @@ if [ "$(uname)" == 'Darwin' ]; then
     install_with_brew tmux
     install_with_brew ghq
     install_with_brew hub
+    install_with_brew ros
 fi
 
