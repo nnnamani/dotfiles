@@ -176,8 +176,10 @@ export PATH=$PATH:/Users/mani/.nodebrew/current/bin
 # Roswell
 export PATH=/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:$PATH
 
+# Go
+if which goenv > /dev/null; then eval "$(goenv init -)"; fi
 
-
+# zsh plugins
 zplug zsh-users/zsh-autosuggestions
 zplug zsh-users/zsh-completions
 zplug zsh-users/zsh-syntax-highlighting
@@ -187,11 +189,9 @@ zplug zsh-users/zsh-syntax-highlighting
 zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline)
 
-
 if [ -e ~/.zshrc_local ]; then
     source ~/.zshrc_local
 fi
-
 
 # install zsh plugins with zplug.
 if ! zplug check --verbose; then
@@ -202,4 +202,4 @@ if ! zplug check --verbose; then
 fi
 
 zplug load
-export PATH=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/usr/local/Cellar/zplug/2.4.2/bin:/usr/local/opt/zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:~/.roswell/bin
+export PATH=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/usr/local/Cellar/zplug/2.4.2/bin:/usr/local/opt/zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:~/.roswell/bin:$PATH
