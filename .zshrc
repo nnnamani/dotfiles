@@ -1,17 +1,3 @@
-alias tm='tmux'
-alias tmsessions='tmux list-sessions | peco --prompt '\''Session:'\'' | awk -F'\'':'\'' '\''{print $1}'\'''
-alias tma='tmux attach-sessio -t $(tmsessions)'
-alias tms='tmux switch-client -t $(tmsessions)'
-alias tmk='tmux kill-session -t $(tmsessions)'
-
-# if [ $SHLVL = 1 ]; then
-#     if [ $(tmux list-sessions | awk -F':' '{print $1}' | wc -l | awk '{print $1}') -eq 0 ]; then
-#         tmux
-#     else
-#         tma
-#     fi
-# fi
-
 export TERM="xterm-256color"
 export ZPLUG_HOME=/usr/local/opt/zplug
 source $ZPLUG_HOME/init.zsh
@@ -61,7 +47,7 @@ alias -g H='| head'
 alias -g G='| grep'
 alias -g GI='| grep -ri'
 
-alias repos='ghq list -p | peco'
+alias repos='ghq list -p | fzf'
 alias cdrepos='cd $(repos)'
 alias lst='ls -ltr --color=auto'
 alias l='ls -ltr --color=auto'
@@ -71,13 +57,11 @@ alias so='source'
 alias v='vim'
 alias vi='vim'
 alias vz='vim ~/.zshrc'
-alias c='cdr'
+
 # historyに日付を表示
-alias h='fc -lt '%F %T' 1'
 alias cp='cp -i'
 alias rm='rm -i'
 alias mkdir='mkdir -p'
-alias ..='c ../'
 alias back='pushd'
 alias diff='diff -U1'
 alias sz='source ~/.zshrc'
@@ -92,15 +76,15 @@ alias mch='sshfs conoha:/home/nnnamani ~/conoha/nnnamani'
 alias cdch='cd ~/conoha/nnnamani'
 alias firefox="open /Applications/Firefox.app"
 
-# backspace,deleteキーを使えるように
-stty erase ^H
-bindkey "^[[3~" delete-char
+# emacs
+alias em='emacsclient -t'
+
+# show colors
+alias show-colors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%16)) -eq 15 ] && echo;done;echo'
 
 # cdの後にlsを実行
 # chpwd() { ls -ltr }
 
-# どこからでも参照できるディレクトリパス
-cdpath=(~)
 
 # 区切り文字の設定
 autoload -Uz select-word-style
@@ -118,8 +102,8 @@ zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # Ctrl+rでヒストリーのインクリメンタルサーチ、Ctrl+sで逆順
-## peco
-function peco-select-history() {
+## fzf
+function fzf-select-history() {
     local tac
     if which tac > /dev/null; then
         tac="tac"
@@ -128,14 +112,23 @@ function peco-select-history() {
     fi
 
     BUFFER=$(\history -n 1 | \
-        eval $tac | \
-        awk '!a[$0]++' | \
-        peco --query "$LBUFFER")
+                 eval $tac | \
+                 awk '!a[$0]++' | \
+                 fzf --query "$LBUFFER")
     CURSOR=$#BUFFER
     zle clear-screen
 }
-zle -N peco-select-history
-bindkey '^r' peco-select-history
+zle -N fzf-select-history
+bindkey '^r' fzf-select-history
+
+fkill() {
+    local pid
+    pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    if [ "x$pid" != "x" ]
+    then
+        echo $pid | xargs kill -${1:-9}
+    fi
+}
 
 # コマンドを途中まで入力後、historyから絞り込み
 # 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
@@ -157,21 +150,61 @@ alias zmv='noglob zmv -W'
 
 # mkdirとcdを同時実行
 function mkcd() {
-  if [[ -d $1 ]]; then
-    echo "$1 already exists!"
-    cd $1
-  else
-    mkdir -p $1 && cd $1
-  fi
+    if [[ -d $1 ]]; then
+        echo "$1 already exists!"
+        cd $1
+    else
+        mkdir -p $1 && cd $1
+    fi
 }
 
+# プロンプト
+function git-current-branch() {
+    local branch_name st branch_status
+
+    if [ ! -e  ".git" ]; then
+        return
+    fi
+
+    branch_name=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
+    st=`git status 2> /dev/null`
+    if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
+        branch_status="%F{green}"
+    elif [[ -n `echo "$st" | grep "^Untracked files"` ]]; then
+        branch_status="%F{red}?"
+    elif [[ -n `echo "$st" | grep "^Changes not staged for commit"` ]]; then
+        branch_status="%F{red}+"
+    elif [[ -n `echo "$st" | grep "^Changes to be committed"` ]]; then
+        branch_status="%F{yellow}!"
+    elif [[ -n `echo "$st" | grep "^rebase in progress"` ]]; then
+        echo "%F{red}!(no branch)"
+        return
+    else
+        branch_status="%F{blue}"
+    fi
+    echo "${branch_status}$branch_name"
+}
+
+function prompt() {
+    local separator='%F{green}:%f'
+    PROMPT_1="%m${separator}%c${separator}`git-current-branch`"
+    PROMPT_ARROW="%F{135}\U2771%f"
+    print "%F{green}\U2772%f${PROMPT_1}%F{green}\U2773%f\n${PROMPT_ARROW} "
+}
+
+setopt prompt_subst
+precmd() {
+    PROMPT="`prompt`"
+}
+
+
+
 # Ruby
-export PATH=$HOME/.rbenv/bin:$PATH
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+export PATH=${HOME}/.rbenv/bin:${PATH}
+eval "$(rbenv init -)"
 
 # Node.js
-export PATH=$PATH:/Users/mani/.nodebrew/current/bin
-
+export PATH=/Users/mani/.nodebrew/current/bin:$PATH
 
 # Roswell
 export PATH=/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:$PATH
@@ -183,15 +216,8 @@ if which goenv > /dev/null; then eval "$(goenv init -)"; fi
 zplug zsh-users/zsh-autosuggestions
 zplug zsh-users/zsh-completions
 zplug zsh-users/zsh-syntax-highlighting
-#zplug mafredri/zsh-async, from:github
-#zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 
-zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs newline)
-
-if [ -e ~/.zshrc_local ]; then
-    source ~/.zshrc_local
-fi
+if [ -e $HOME/.zshrc_local ]; then . $HOME/.zshrc_local; fi
 
 # install zsh plugins with zplug.
 if ! zplug check --verbose; then
@@ -202,4 +228,4 @@ if ! zplug check --verbose; then
 fi
 
 zplug load
-export PATH=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/usr/local/Cellar/zplug/2.4.2/bin:/usr/local/opt/zplug/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:/Users/mani/.roswell/bin:/Users/yujisuzuki/.rbenv/shims:/Users/yujisuzuki/.rbenv/bin:/Users/yujisuzuki/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:/Users/mani/.nodebrew/current/bin:/usr/local/mysql/bin:~/.roswell/bin:$PATH
+export PATH=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:$PATH

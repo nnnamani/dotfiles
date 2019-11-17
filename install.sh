@@ -5,5 +5,10 @@ do
     if [ -x ~/$(basename $name) ]; then
         cp ~/$(basename $name) ~/$(basename $name).old
     fi
-    ln -sfv $name ~/$(basename $name)
+
+    if [ -d $name ]; then
+	ln -sfv $name ~
+    else
+	ln -sfv $name ~/$(basename $name)
+    fi
 done
