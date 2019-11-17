@@ -1,14 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-for name in $(find `pwd` -type d -name .git -prune -o -name ".*" -print)
+dotfiles=(.emacs.d .lem .tmux.conf .vimrc .zshrc)
+
+#for name in $(find `pwd` -type d -name .git -prune -o -name ".*" -print)
+for name in ${dotfiles[@]}
 do
-    if [ -x ~/$(basename $name) ]; then
-        cp ~/$(basename $name) ~/$(basename $name).old
-    fi
-
-    if [ -d $name ]; then
-	ln -sfv $name ~
-    else
-	ln -sfv $name ~/$(basename $name)
-    fi
+	ln -sfv $(find $(pwd) -name $name) ~
 done
