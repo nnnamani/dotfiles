@@ -20,23 +20,6 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-;;; apple script
-;; (defun* open-iterm (&optional (activate ""))
-;;   (do-applescript
-;;    (format "
-;; tell application \"iTerm\"
-;;   set wCount to count windows
-
-;;   -- open window if window is nothing.
-;;   if wCount = 0 then
-;;     create window with default profile
-;;   else
-;;     tell last session of current tab of current window to select
-;;   end if
-;;   %s
-;; end tell
-;; "  activate)))
-
 (use-package auto-package-update
   :config
   (setq auto-package-update-delete-old-versions t)
@@ -117,6 +100,10 @@
   (callf null show-trailing-whitespace))
 
 (initialize-local)
+
+(use-package golden-ratio
+  :config
+  (golden-ratio-mode 1))
 
 ;;; use auto saving buffer enhanced.
 (use-package real-auto-save
@@ -451,7 +438,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish))))
+    (golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

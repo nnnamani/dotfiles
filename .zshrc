@@ -66,7 +66,7 @@ alias back='pushd'
 alias diff='diff -U1'
 alias sz='source ~/.zshrc'
 alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
-alias julia='/Applications/Julia-1.1.app/Contents/Resources/julia/bin/julia'
+alias julia='/Applications/Julia-1.3.app/Contents/Resources/julia/bin/julia'
 alias gpg="LANG=en_US.utf-8 gpg"
 alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 alias enable_mac_keyboard="sudo kextload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
@@ -78,12 +78,14 @@ alias firefox="open /Applications/Firefox.app"
 
 # emacs
 alias em='emacsclient -t'
-
-# show colors
 alias show-colors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%16)) -eq 15 ] && echo;done;echo'
 
 # cdの後にlsを実行
-# chpwd() { ls -ltr }
+chpwd() {
+    if [ -e ./.envrc ]; then
+        direnv allow
+    fi
+}
 
 
 # 区切り文字の設定
@@ -100,6 +102,32 @@ zstyle ':completion:*:default' menu select=2
 
 # 補完で大文字にもマッチ
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# fzf
+source /usr/local/Cellar/fzf/0.18.0/shell/completion.zsh
+export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+
+# Use fd (https://github.com/sharkdp/fd) instead of the default find
+# command for listing path candidates.
+# - The first argument to the function ($1) is the base path to start traversal
+# - See the source code (completion.{bash,zsh}) for the details.
+_fzf_compgen_path() {
+  fd --hidden --follow --exclude ".git" . "$1"
+}
+
+# Use fd to generate the list for directory completion
+_fzf_compgen_dir() {
+  fd --type d --hidden --follow --exclude ".git" . "$1"
+}
+
+export FZF_COMPLETION_TRIGGER=''
+bindkey '^T' fzf-completion
+bindkey '^I' $fzf_default_completion
+
+
+#complete -F _fzf_path_completion -o default -o bashdefault rg
+#complete -F _fzf_dir_completion -o default -o bashdefault tree
 
 # Ctrl+rでヒストリーのインクリメンタルサーチ、Ctrl+sで逆順
 ## fzf
@@ -127,6 +155,26 @@ fkill() {
     if [ "x$pid" != "x" ]
     then
         echo $pid | xargs kill -${1:-9}
+    fi
+}
+
+# find git project home
+function cdgithome() {
+    if [ -z "$1" ]; then
+        current_dir="."
+    else
+        current_dir="$1"
+    fi
+
+    cd "$current_dir"
+
+    if [ "$(pwd)" = "/" ]; then
+        echo "Not Found"
+        return 1
+    elif [ -e ".git" ]; then
+        pwd
+    else
+        githome ..
     fi
 }
 
@@ -197,14 +245,12 @@ precmd() {
     PROMPT="`prompt`"
 }
 
-
-
 # Ruby
 export PATH=${HOME}/.rbenv/bin:${PATH}
 eval "$(rbenv init -)"
 
 # Node.js
-export PATH=/Users/mani/.nodebrew/current/bin:$PATH
+export PATH=$PATH:/Users/mani/.nodebrew/current/bin
 
 # Roswell
 export PATH=/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:$PATH
@@ -213,9 +259,16 @@ export PATH=/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:$PATH
 if which goenv > /dev/null; then eval "$(goenv init -)"; fi
 
 # zsh plugins
+
+# docker
+fpath=(~/.zsh/completion $fpath)
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
+
 zplug zsh-users/zsh-autosuggestions
 zplug zsh-users/zsh-completions
 zplug zsh-users/zsh-syntax-highlighting
+
 
 if [ -e $HOME/.zshrc_local ]; then . $HOME/.zshrc_local; fi
 
