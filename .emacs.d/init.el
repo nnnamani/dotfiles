@@ -32,11 +32,43 @@
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
+(defun mark-word-at-point ()
+  (interactive)
+  (let ((char (char-to-string (char-after (point)))))
+    (cond
+     ((string= " " char) (delete-horizontal-space))
+     ((string-match "[\t\n -@\[-`{-~]" char) (mark-word ))
+     (t (forward-char) (backward-word) (mark-word 1)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; C-x 2 C-o
+;; (defun other-window-or-split-h ()
+;;   (interactive)
+;;   (when (one-window-p)
+;;     (split-window-horizontally))
+;;   (other-window 1))
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;; C-x 3 C-o
+;; (defun other-window-or-split-v ()
+;;   (interactive)
+;;   (when (one-window-p)
+;;     (split-window-vertically))
+;;   (other-window 1))
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (bind-key "s-[" 'other-window-or-split-v)
+;; (bind-key "s-]" 'other-window-or-split-h)
+
 ;;; key binds
 (progn
   (define-key global-map (kbd "\C-h") 'delete-backward-char)
+  (define-key global-map (kbd "<f1>") 'other-window)
   (define-key global-map (kbd "\C-t") 'other-window)
-  (define-key global-map (kbd "\C-c \C-f") 'toggle-frame-fullscreen))
+  (define-key global-map (kbd "<f2>") 'delete-window)
+  (define-key global-map (kbd "\C-c \C-f") 'toggle-frame-fullscreen)
+  (define-key global-map (kbd "\C-c TAB") 'mark-word-at-point)
+  (define-key global-map (kbd "\C-c \C-g") 'magit)
+  (define-key global-map (kbd "s-{") 'previous-buffer)
+  (define-key global-map (kbd "s-}") 'next-buffer))
 
 ;;; beep音を消す
 (defun my-bell-function ()
@@ -227,7 +259,15 @@
 ;;; ruby-electric-mode
 (use-package ruby-electric :defer t
   :init
-  (add-hook 'ruby-mode-hook 'ruby-electric-mode))
+  (add-hook 'ruby-mode-hook 'ruby-electric-mode)
+  :config
+  (which-function-mode)
+  (setq-default header-line-format
+                '((which-func-mode ("" which-func-format " "))))
+  (setq mode-line-misc-info
+        ;; We remove Which Function Mode from the mode line, because it's mostly
+        ;; invisible here anyway.
+        (assq-delete-all 'which-func-mode mode-line-misc-info)))
 
 ;;; ruby-mode
 (use-package ruby-mode :defer t
@@ -235,6 +275,16 @@
          ("\\.ruby$" . ruby-mode))
   :init
   (setq ruby-insert-encoding-magic-comment nil))
+
+(use-package rspec-mode
+  :defer 20
+  :commands rspec-mode
+  :config
+  (add-hook 'ruby-mode-hook 'rspec-mode)
+  ;; (rspec-install-snippets)
+  :config
+  (custom-set-variables '(rspec-use-rake-flag nil))
+  (custom-set-faces))
 
 ;;; inf-ruby
 (use-package inf-ruby :defer t
@@ -438,7 +488,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish))))
+    (rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
