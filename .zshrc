@@ -1,3 +1,5 @@
+export PATH=$PATH:/usr/local/bin
+
 export TERM="xterm-256color"
 export ZPLUG_HOME=/usr/local/opt/zplug
 source $ZPLUG_HOME/init.zsh
@@ -9,7 +11,7 @@ setopt IGNOREEOF
 export LANG=ja_JP.UTF-8
 
 # パスを追加したい場合
-export PATH="$HOME/bin:$PATH"
+export PATH=$PATH:$HOME/bin
 
 # 色を使用
 autoload -Uz colors
@@ -86,7 +88,6 @@ chpwd() {
         direnv allow
     fi
 }
-
 
 # 区切り文字の設定
 autoload -Uz select-word-style
@@ -246,14 +247,14 @@ precmd() {
 }
 
 # Ruby
-export PATH=${HOME}/.rbenv/bin:${PATH}
+export PATH=$PATH:$HOME/.rbenv/bin
 eval "$(rbenv init -)"
 
 # Node.js
 export PATH=$PATH:/Users/mani/.nodebrew/current/bin
 
 # Roswell
-export PATH=/Users/mani/.roswell/bin:/Users/mani/.roswell/bin:$PATH
+export PATH=$PATH:/Users/mani/.roswell/bin:/Users/mani/.roswell/bin
 
 # Go
 if which goenv > /dev/null; then eval "$(goenv init -)"; fi
@@ -281,4 +282,4 @@ if ! zplug check --verbose; then
 fi
 
 zplug load
-export PATH=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin:$PATH
+export PATH=$PATH:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin
