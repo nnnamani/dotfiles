@@ -85,7 +85,6 @@ alias show-colors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%
 # git utils
 alias sb='git checkout $(git branch | grep -v "^*" | tr -d "[:blank:]" | fzf)'
 
-# cdの後にlsを実行
 chpwd() {
     if [ -e ./.envrc ]; then
         direnv allow
@@ -129,13 +128,9 @@ export FZF_COMPLETION_TRIGGER=''
 bindkey '^T' fzf-completion
 bindkey '^I' $fzf_default_completion
 
-
-#complete -F _fzf_path_completion -o default -o bashdefault rg
-#complete -F _fzf_dir_completion -o default -o bashdefault tree
-
 # Ctrl+rでヒストリーのインクリメンタルサーチ、Ctrl+sで逆順
 ## fzf
-function fzf-select-history() {
+fzf-select-history() {
     local tac
     if which tac > /dev/null; then
         tac="tac"
@@ -150,6 +145,12 @@ function fzf-select-history() {
     CURSOR=$#BUFFER
     zle clear-screen
 }
+
+# fzf-git-add
+fzf-git-add() {
+    git add $(git status -s | grep -v '^[M|A|D] ' | fzf -m --reverse | awk '{print $2}')
+}
+
 zle -N fzf-select-history
 bindkey '^r' fzf-select-history
 
@@ -201,7 +202,7 @@ autoload -Uz zmv
 alias zmv='noglob zmv -W'
 
 # mkdirとcdを同時実行
-function mkcd() {
+mkcd() {
     if [[ -d $1 ]]; then
         echo "$1 already exists!"
         cd $1
@@ -210,8 +211,20 @@ function mkcd() {
     fi
 }
 
+prompt() {
+    local separator='%F{green}:%f'
+    PROMPT_1="%m:%c`git-current-branch`"
+    PROMPT_ARROW="%F{135}\U2771%f"
+    print "%F{green}\U2772%f${PROMPT_1}%F{green}\U2773%f\n${PROMPT_ARROW} "
+}
+
+setopt prompt_subst
+precmd() {
+    PROMPT="`prompt`"
+}
+
 # プロンプト
-function git-current-branch() {
+git-current-branch() {
     local branch_name st branch_status
 
     if [ ! -e  ".git" ]; then
@@ -219,6 +232,7 @@ function git-current-branch() {
     fi
 
     branch_name=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
+    after_status=''
     st=`git status 2> /dev/null`
     if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
         branch_status="%F{green}"
@@ -229,27 +243,35 @@ function git-current-branch() {
     elif [[ -n `echo "$st" | grep "^Changes to be committed"` ]]; then
         branch_status="%F{yellow}!"
     elif [[ -n `echo "$st" | grep "^rebase in progress"` ]]; then
-        echo "%F{red}!(no branch)"
-        return
+        branch_status="%F{white}!"
+        after_status="|rebase"
+    elif [[ -n `echo "$st" | grep "^Unmerged paths"` ]]; then
+        branch_status="%F{white}!"
+        after_status="|merge"
     else
         branch_status="%F{blue}"
     fi
-    echo "${branch_status}$branch_name"
+    echo ":${branch_status}${branch_name}${after_status}$(git-branch-status)"
 }
 
-function prompt() {
-    local separator='%F{green}:%f'
-    PROMPT_1="%m${separator}%c${separator}`git-current-branch`"
-    PROMPT_ARROW="%F{135}\U2771%f"
-    print "%F{green}\U2772%f${PROMPT_1}%F{green}\U2773%f\n${PROMPT_ARROW} "
+function git-branch-status() {
+    staged=`git status -s | grep -c '^[M|D] '`
+    un_trace=`git status -s | grep -c '^??'`
+    mod=`git status -s | grep -c '^ M'`
+    del=`git status -s | grep -c '^ D'`
+    if [ `expr $un_trace + $mod + $del` -gt 0 ]; then
+        echo "%F{white}(%F{yellow}S:$staged|%F{green}M:$mod%F{white}|%F{blue}D:$del%F{white}|%F{magenta}N:$un_trace%F{white})"
+    fi
 }
 
-setopt prompt_subst
-precmd() {
-    PROMPT="`prompt`"
-}
+# Use gnu readline.
+export LDFLAGS="-L/usr/local/opt/readline/lib"
+export CPPFLAGS="-I/usr/local/opt/readline/include"
+export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
 
-# Ruby
+#
+# rbenv settings
+#
 export PATH=$PATH:$HOME/.rbenv/bin
 eval "$(rbenv init -)"
 
