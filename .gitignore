@@ -1,2 +1,6 @@
 .emacs.d/elpa
 .emacs.d/.last-package-update-day
+.emacs.d/auto-save-list/
+.emacs.d/bookmarks
+.emacs.d/recentf
+.emacs.d/transient/
