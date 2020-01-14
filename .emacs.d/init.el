@@ -68,7 +68,11 @@
   (define-key global-map (kbd "\C-c TAB") 'mark-word-at-point)
   (define-key global-map (kbd "\C-c \C-g") 'magit)
   (define-key global-map (kbd "s-{") 'previous-buffer)
-  (define-key global-map (kbd "s-}") 'next-buffer))
+  (define-key global-map (kbd "s-}") 'next-buffer)
+  (define-key global-map (kbd "\C-c \C-e") (lambda ()
+                                             (interactive)
+                                             (find-file "~/.emacs.d/init.el")))
+  )
 
 ;;; beep音を消す
 (defun my-bell-function ()
@@ -135,7 +139,7 @@
 
 (use-package golden-ratio
   :config
-  (golden-ratio-mode 1))
+  (golden-ratio-mode 0))
 
 ;;; use auto saving buffer enhanced.
 (use-package real-auto-save
@@ -417,7 +421,9 @@
   (setq org-default-notes-file "notes.org")
   (setq org-capture-templates
         '(("n" "Note" entry (file+headline "~/org/notes.org" "Notes")
-           "* %?\nEntered on %U\n %i\n %a"))))
+           "* %?\nEntered on %U\n %i\n %a")
+          ("m" "Minutes" entry (file+headline "~/org/minutes.org" "Minutes")
+           "# %?\nEntered on %U\n"))))
 
 ;;; company
 (use-package company
@@ -480,6 +486,19 @@
   (add-to-list 'popwin:special-display-config
              '("\\`\\*eshell" :regexp t :dedicated t :position bottom
                :height 0.3)))
+
+;; load custom functions
+;; 画面を一時的に最大化できる拡張
+(add-to-list 'load-path "custom_functions/instant-maximized-window/")
+(when (require 'instant-maximized-window nil t)
+  ;; if you like to bind the key
+  (global-set-key (kbd "C-c C-o") 'window-temp-maximize))
+
+;; 非アクティブウィンドウの背景色
+(add-to-list 'load-path "custom_functions/hiwin/")
+(when (require 'hiwin nil t)
+  (hiwin-activate)                            ;; hiwin-modeを有効化
+  (set-face-background 'hiwin-face "gray10"))  ;; 非アクティブバッファの背景色を設定
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
