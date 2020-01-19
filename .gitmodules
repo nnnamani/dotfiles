@@ -1,0 +1,6 @@
+[submodule ".emacs.d/modules/awesome-tab"]
+	path = .emacs.d/modules/awesome-tab
+	url = https://github.com/nnnamani/awesome-tab.git
+[submodule ".emacs.d/modules/instant-maximized-window"]
+	path = .emacs.d/modules/instant-maximized-window
+	url = https://github.com/nnnamani/instant-maximized-window.git

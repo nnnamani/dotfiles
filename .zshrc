@@ -107,7 +107,7 @@ zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # fzf
-source /usr/local/Cellar/fzf/0.18.0/shell/completion.zsh
+source /usr/local/Cellar/fzf/0.20.0/shell/completion.zsh
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
 
@@ -308,3 +308,4 @@ fi
 
 zplug load
 export PATH=$PATH:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin
+export PATH=/usr/local/sbin:$PATH

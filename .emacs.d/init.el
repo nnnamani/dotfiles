@@ -40,39 +40,15 @@
      ((string-match "[\t\n -@\[-`{-~]" char) (mark-word ))
      (t (forward-char) (backward-word) (mark-word 1)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; C-x 2 C-o
-;; (defun other-window-or-split-h ()
-;;   (interactive)
-;;   (when (one-window-p)
-;;     (split-window-horizontally))
-;;   (other-window 1))
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;; C-x 3 C-o
-;; (defun other-window-or-split-v ()
-;;   (interactive)
-;;   (when (one-window-p)
-;;     (split-window-vertically))
-;;   (other-window 1))
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (bind-key "s-[" 'other-window-or-split-v)
-;; (bind-key "s-]" 'other-window-or-split-h)
-
 ;;; key binds
 (progn
   (define-key global-map (kbd "\C-h") 'delete-backward-char)
-  (define-key global-map (kbd "<f1>") 'other-window)
-  (define-key global-map (kbd "\C-t") 'other-window)
-  (define-key global-map (kbd "<f2>") 'delete-window)
   (define-key global-map (kbd "\C-c \C-f") 'toggle-frame-fullscreen)
   (define-key global-map (kbd "\C-c TAB") 'mark-word-at-point)
   (define-key global-map (kbd "\C-c \C-g") 'magit)
-  (define-key global-map (kbd "s-{") 'previous-buffer)
-  (define-key global-map (kbd "s-}") 'next-buffer)
   (define-key global-map (kbd "\C-c \C-e") (lambda ()
                                              (interactive)
-                                             (find-file "~/.emacs.d/init.el")))
-  )
+                                             (find-file "~/.emacs.d/init.el"))))
 
 ;;; beep音を消す
 (defun my-bell-function ()
@@ -263,15 +239,7 @@
 ;;; ruby-electric-mode
 (use-package ruby-electric :defer t
   :init
-  (add-hook 'ruby-mode-hook 'ruby-electric-mode)
-  :config
-  (which-function-mode)
-  (setq-default header-line-format
-                '((which-func-mode ("" which-func-format " "))))
-  (setq mode-line-misc-info
-        ;; We remove Which Function Mode from the mode line, because it's mostly
-        ;; invisible here anyway.
-        (assq-delete-all 'which-func-mode mode-line-misc-info)))
+  (add-hook 'ruby-mode-hook 'ruby-electric-mode))
 
 ;;; ruby-mode
 (use-package ruby-mode :defer t
@@ -487,18 +455,54 @@
              '("\\`\\*eshell" :regexp t :dedicated t :position bottom
                :height 0.3)))
 
-;; load custom functions
-;; 画面を一時的に最大化できる拡張
-(add-to-list 'load-path "custom_functions/instant-maximized-window/")
-(when (require 'instant-maximized-window nil t)
-  ;; if you like to bind the key
+(use-package instant-maximized-window
+  :load-path "./modules/instant-maximized-window"
+  :config
   (global-set-key (kbd "C-c C-o") 'window-temp-maximize))
 
-;; 非アクティブウィンドウの背景色
-(add-to-list 'load-path "custom_functions/hiwin/")
-(when (require 'hiwin nil t)
-  (hiwin-activate)                            ;; hiwin-modeを有効化
-  (set-face-background 'hiwin-face "gray10"))  ;; 非アクティブバッファの背景色を設定
+(use-package awesome-tab
+  :load-path "./modules/awesome-tab"
+  :config
+  (awesome-tab-mode t))
+
+(use-package hydra
+  :config
+  (defhydra awesome-fast-switch (global-map "C-q")
+    "
+ ^^^^Fast Move             ^^^^Tab                    ^^Search            ^^Misc                         ^^Window
+-^^^^--------------------+-^^^^---------------------+-^^----------------+-^^---------------------------+-^^---------------------------
+   ^_k_^   prev group    | _C-a_^^     select first | _b_ search buffer | _C-k_   kill buffer          | o  toggle maximize window
+ _h_   _l_  switch tab   | _C-e_^^     select last  | _g_ search group  | _C-S-k_ kill others in group | ^^
+   ^_j_^   next group    | _C-j_^^     ace jump     | ^^                | ^^                           | ^^
+ ^^0 ~ 9^^ select window | _C-h_/_C-l_ move current | ^^                | ^^                           | ^^
+-^^^^--------------------+-^^^^---------------------+-^^----------------+-^^---------------------------+-^^---------------------------
+"
+    ("h" awesome-tab-backward-tab)
+    ("j" awesome-tab-forward-group)
+    ("k" awesome-tab-backward-group)
+    ("l" awesome-tab-forward-tab)
+    ("C-q" other-window)
+    ("0" my-select-window)
+    ("1" my-select-window)
+    ("2" my-select-window)
+    ("3" my-select-window)
+    ("4" my-select-window)
+    ("5" my-select-window)
+    ("6" my-select-window)
+    ("7" my-select-window)
+    ("8" my-select-window)
+    ("9" my-select-window)
+    ("C-a" awesome-tab-select-beg-tab)
+    ("C-e" awesome-tab-select-end-tab)
+    ("C-j" awesome-tab-ace-jump)
+    ("C-h" awesome-tab-move-current-tab-to-left)
+    ("C-l" awesome-tab-move-current-tab-to-right)
+    ("b" ivy-switch-buffer)
+    ("g" awesome-tab-counsel-switch-group)
+    ("C-k" kill-current-buffer)
+    ("C-S-k" awesome-tab-kill-other-buffers-in-current-group)
+    ("o" window-temp-maximize)
+    ("q" nil "quit")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -507,7 +511,8 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish))))
+    (hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
+ '(rspec-use-rake-when-possible nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
