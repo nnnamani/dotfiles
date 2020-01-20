@@ -45,10 +45,7 @@
   (define-key global-map (kbd "\C-h") 'delete-backward-char)
   (define-key global-map (kbd "\C-c \C-f") 'toggle-frame-fullscreen)
   (define-key global-map (kbd "\C-c TAB") 'mark-word-at-point)
-  (define-key global-map (kbd "\C-c \C-g") 'magit)
-  (define-key global-map (kbd "\C-c \C-e") (lambda ()
-                                             (interactive)
-                                             (find-file "~/.emacs.d/init.el"))))
+  (define-key global-map (kbd "\C-c \C-g") 'magit))
 
 ;;; beep音を消す
 (defun my-bell-function ()
@@ -471,9 +468,10 @@
     "
  ^^^^Fast Move             ^^^^Tab                    ^^Search            ^^Misc                         ^^Window
 -^^^^--------------------+-^^^^---------------------+-^^----------------+-^^---------------------------+-^^---------------------------
-   ^_k_^   prev group    | _C-a_^^     select first | _b_ search buffer | _C-k_   kill buffer          | o  toggle maximize window
+   ^_k_^   prev group    | _C-a_^^     select first | _b_ search buffer | _C-k_   kill buffer          | _o_  toggle maximize window
  _h_   _l_  switch tab   | _C-e_^^     select last  | _g_ search group  | _C-S-k_ kill others in group | ^^
-   ^_j_^   next group    | _C-j_^^     ace jump     | ^^                | ^^                           | ^^
+   ^_j_^   next group    | _C-j_^^     ace jump     | _f_ find file     | ^^                           | ^^
+ _C-q_   toggle window | ^^                     | ^^                  | ^^                           | ^^
  ^^0 ~ 9^^ select window | _C-h_/_C-l_ move current | ^^                | ^^                           | ^^
 -^^^^--------------------+-^^^^---------------------+-^^----------------+-^^---------------------------+-^^---------------------------
 "
@@ -502,7 +500,29 @@
     ("C-k" kill-current-buffer)
     ("C-S-k" awesome-tab-kill-other-buffers-in-current-group)
     ("o" window-temp-maximize)
-    ("q" nil "quit")))
+    ("f" helm-projectile-find-file)
+    ("q" t)
+    ("C-g" nil "quit"))
+  (defhydra quick-menu (global-map "<f1>")
+    "
+ ^^^^ Quick menu
+-^^^^-----------------------
+e^ Open ~/.emacs.d/init.el
+z^ Open ~/.zshrc
+n^ Open ~/notes directory
+-^^^^-----------------------
+"
+    ("e" (lambda ()
+           (interactive)
+           (find-file "~/.emacs.d/init.el")))
+    ("z" (lambda ()
+           (interactive)
+           (find-file "~/.zshrc")))
+    ("n" (lambda ()
+           (interactive)
+           (find-file "~/notes/")))
+    ("q" t)
+    ("C-g" nil "quit")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
