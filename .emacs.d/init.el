@@ -463,6 +463,18 @@
   (awesome-tab-mode t))
 
 (use-package hydra
+  :init
+  (defun put-file-name-on-clipboard ()
+    "Put the current file name on the clipboard"
+    (interactive)
+    (let ((filename (if (equal major-mode 'dired-mode)
+                        default-directory
+                      (buffer-file-name))))
+      (when filename
+        (with-temp-buffer
+          (insert filename)
+          (clipboard-kill-region (point-min) (point-max)))
+        (message filename))))
   :config
   (defhydra awesome-fast-switch (global-map "C-q")
     "
@@ -510,6 +522,8 @@
 e^ Open ~/.emacs.d/init.el
 z^ Open ~/.zshrc
 n^ Open ~/notes directory
+p^ Put current file name on clipboard
+r^ Run command in project root
 -^^^^-----------------------
 "
     ("e" (lambda ()
@@ -521,6 +535,8 @@ n^ Open ~/notes directory
     ("n" (lambda ()
            (interactive)
            (find-file "~/notes/")))
+    ("p" put-file-name-on-clipboard)
+    ("r" projectile-run-shell-command-in-root)
     ("q" t)
     ("C-g" nil "quit")))
 
