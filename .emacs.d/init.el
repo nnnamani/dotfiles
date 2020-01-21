@@ -188,6 +188,11 @@
     (add-hook 'emacs-startup-hook 'rainbow-delimiters-using-stronger-colors)))
 
 
+;;; Language server protocol
+(use-package lsp-mode
+  :hook (ruby-mode . lsp-deferred)
+  :commands (lsp lsp-deferred))
+
 ;;; web-mode
 (use-package web-mode
   :mode (("\\.html$" . web-mode)
@@ -372,7 +377,6 @@
   (add-hook 'after-init-hook #'global-flycheck-mode)
   (add-hook 'slim-mode-hook '(lambda (flycheck-mode 1)))
   (add-hook 'ruby-mode-hook '(lambda ()
-                               (setq flycheck-checker 'ruby-rubocop)
                                (flycheck-mode 1))))
 
 ;;; org
@@ -547,7 +551,7 @@ r^ Run command in project root
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
+    (lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
  '(rspec-use-rake-when-possible nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -73,11 +73,6 @@ alias gpg="LANG=en_US.utf-8 gpg"
 alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 alias enable_mac_keyboard="sudo kextload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 
-# mount conoha home
-alias mch='sshfs conoha:/home/nnnamani ~/conoha/nnnamani'
-alias cdch='cd ~/conoha/nnnamani'
-alias firefox="open /Applications/Firefox.app"
-
 # emacs
 alias em='emacsclient -t'
 alias show-colors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%16)) -eq 15 ] && echo;done;echo'
@@ -276,10 +271,10 @@ export PATH=$PATH:$HOME/.rbenv/bin
 eval "$(rbenv init -)"
 
 # Node.js
-export PATH=$PATH:/Users/mani/.nodebrew/current/bin
+export PATH=$PATH:$HOME/.nodebrew/current/bin
 
 # Roswell
-export PATH=$PATH:/Users/mani/.roswell/bin:/Users/mani/.roswell/bin
+export PATH=$PATH:$HOME/.roswell/bin:$HOME/.roswell/bin
 
 # Go
 if which goenv > /dev/null; then eval "$(goenv init -)"; fi
