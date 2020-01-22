@@ -66,8 +66,6 @@
   (set-default-coding-systems 'utf-8)
   (prefer-coding-system 'utf-8)
   (delete-selection-mode t) ; リージョンを削除可能に設定
-  (cua-mode t) ; 矩形選択可能にする
-  (setq cua-enable-cua-keys nil) ; 矩形選択の特殊なキーバインドを無効にする
 
   ;; インデント設定
   (setq-default tab-width 4
@@ -76,7 +74,7 @@
   (load-theme 'misterioso t)
 
   ;; カーソルの色を変更
-  (set-cursor-color 'cyan)
+  (set-cursor-color 'yellow)
 
   ;; 対応する括弧を強調表示する
   (show-paren-mode t)
@@ -85,9 +83,9 @@
   (fset 'yes-or-no-p 'y-or-n-p)
 
   ;; disable default auto save functions.
-  (setq auto-save-default nil)
-  (setq make-backup-files nil)
-  (setq delete-auto-save-files t)
+  (setq auto-save-default nil
+        make-backup-files nil
+        delete-auto-save-files nil)
 
   ;; show trailing spaces.
   (setq-default show-trailing-whitespace nil)
@@ -114,11 +112,15 @@
   :config
   (golden-ratio-mode 0))
 
+(progn
+  (cua-mode t)
+  (setq cua-enable-cua-keys nil))
+
 ;;; use auto saving buffer enhanced.
-(use-package real-auto-save
-  :config
-  (setq real-auto-save-interval 1)
-  (add-hook 'prog-mode-hook 'real-auto-save-mode))
+;; (use-package real-auto-save
+;;   :config
+;;   (setq real-auto-save-interval 10)
+;;   (add-hook 'prog-mode-hook 'real-auto-save-mode))
 
 ;; Powerline
 (use-package powerline :defer t
@@ -332,10 +334,10 @@
   :bind (("C-s" . swiper)))
 
 ;;; projectile-rails
-(use-package projectile-rails :defer t)
+(use-package projectile-rails)
 
 ;;; projectile
-(use-package helm-projectile :defer t
+(use-package helm-projectile
   :diminish projectile-mode
   :bind (("C-c p p" . helm-projectile-switch-project)
          ("C-c p g" . helm-projectile-grep)
@@ -369,15 +371,6 @@
 
 ;;; nginx-mode
 (use-package nginx-mode)
-
-
-;;; flycheck
-(use-package flycheck
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (add-hook 'slim-mode-hook '(lambda (flycheck-mode 1)))
-  (add-hook 'ruby-mode-hook '(lambda ()
-                               (flycheck-mode 1))))
 
 ;;; org
 (use-package org :defer t
@@ -516,7 +509,9 @@
     ("C-k" kill-current-buffer)
     ("C-S-k" awesome-tab-kill-other-buffers-in-current-group)
     ("o" window-temp-maximize)
-    ("f" helm-projectile-find-file)
+    ("f" (lambda ()
+           (interactive)
+           (helm-projectile-find-file)))
     ("q" t)
     ("C-g" nil "quit"))
   (defhydra quick-menu (global-map "<f1>")
@@ -549,9 +544,10 @@ r^ Run command in project root
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(global-hl-line-mode t)
  '(package-selected-packages
    (quote
-    (lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
+    (lsp-solargraph lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
  '(rspec-use-rake-when-possible nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -562,4 +558,5 @@ r^ Run command in project root
  '(helm-header ((t (:background "#3a3a3a" :underline nil))))
  '(helm-match ((t (:foreground "darkolivegreen3"))))
  '(helm-selection ((t (:background "#005f87" :weight normal))))
- '(helm-source-header ((t (:background "gray16" :foreground "gray64" :slant italic)))))
+ '(helm-source-header ((t (:background "gray16" :foreground "gray64" :slant italic))))
+ '(hl-line ((t (:inherit highlight :background "dark slate blue")))))

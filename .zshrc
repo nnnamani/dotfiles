@@ -80,6 +80,8 @@ alias show-colors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%
 # git utils
 alias sb='git checkout $(git branch | grep -v "^*" | tr -d "[:blank:]" | fzf)'
 
+alias killall_chrome='kill $(ps -ax | grep "Google Chrome" | grep -v "grep" | awk "{print $1}")'
+
 chpwd() {
     if [ -e ./.envrc ]; then
         direnv allow
