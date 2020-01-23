@@ -12,6 +12,7 @@ export LANG=ja_JP.UTF-8
 
 # パスを追加したい場合
 export PATH=$PATH:$HOME/bin
+export PATH=/usr/local/sbin:$PATH
 
 # 色を使用
 autoload -Uz colors
@@ -281,7 +282,8 @@ export PATH=$PATH:$HOME/.roswell/bin:$HOME/.roswell/bin
 # Go
 if which goenv > /dev/null; then eval "$(goenv init -)"; fi
 
-# zsh plugins
+# kubectl completion
+source <(kubectl completion zsh)
 
 # docker
 fpath=(~/.zsh/completion $fpath)
@@ -291,7 +293,6 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 zplug zsh-users/zsh-autosuggestions
 zplug zsh-users/zsh-completions
 zplug zsh-users/zsh-syntax-highlighting
-
 
 if [ -e $HOME/.zshrc_local ]; then . $HOME/.zshrc_local; fi
 
@@ -304,5 +305,3 @@ if ! zplug check --verbose; then
 fi
 
 zplug load
-export PATH=$PATH:/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin
-export PATH=/usr/local/sbin:$PATH

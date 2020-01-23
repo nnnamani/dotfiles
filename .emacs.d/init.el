@@ -145,6 +145,9 @@
                                          (powerline-raw " " face1)
                                          (funcall separator-left face1 face2)
                                          (powerline-buffer-id nil )
+                                         (powerline-raw "%4l")
+                                         (powerline-raw ":")
+                                         (powerline-raw "%2c")
                                          (powerline-raw " [ ")
                                          (powerline-raw mode-line-mule-info nil)
                                          (powerline-raw "%*")
@@ -152,10 +155,7 @@
                                          (powerline-process nil)
                                          (powerline-vc)
                                          (powerline-raw " ]")))
-                              (rhs (list (powerline-raw "%4l")
-                                         (powerline-raw ":")
-                                         (powerline-raw "%2c")
-                                         (powerline-raw " | ")
+                              (rhs (list (powerline-raw " | ")
                                          (powerline-raw "%6p")
                                          (powerline-raw " "))))
                          (concat (powerline-render lhs)
@@ -332,6 +332,12 @@
 ;;; swiper
 (use-package swiper-helm :defer t
   :bind (("C-s" . swiper)))
+
+(use-package projectile
+  :config
+  (use-package projectile-direnv
+    :config
+    (add-hook 'projectile-mode-hook 'projectile-direnv-export-variables)))
 
 ;;; projectile-rails
 (use-package projectile-rails)
@@ -536,6 +542,9 @@ r^ Run command in project root
            (find-file "~/notes/")))
     ("p" put-file-name-on-clipboard)
     ("r" projectile-run-shell-command-in-root)
+    ("s" (lambda ()
+           (interactive)
+           (projectile-run-async-shell-command-in-root))
     ("q" t)
     ("C-g" nil "quit")))
 
@@ -547,7 +556,7 @@ r^ Run command in project root
  '(global-hl-line-mode t)
  '(package-selected-packages
    (quote
-    (lsp-solargraph lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
+    (projectile-direnv lsp-solargraph lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
  '(rspec-use-rake-when-possible nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
