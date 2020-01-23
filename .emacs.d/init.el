@@ -542,9 +542,6 @@ r^ Run command in project root
            (find-file "~/notes/")))
     ("p" put-file-name-on-clipboard)
     ("r" projectile-run-shell-command-in-root)
-    ("s" (lambda ()
-           (interactive)
-           (projectile-run-async-shell-command-in-root))
     ("q" t)
     ("C-g" nil "quit")))
 
