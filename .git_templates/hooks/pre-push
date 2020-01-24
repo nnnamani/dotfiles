@@ -1,12 +1,11 @@
 #!/bin/bash
 
 local forbidden_branches=(master develop)
-echo "${forbidden_branches[@]}"
 
 while read local_ref local_sha1 remote_ref remote_sha1
 do
   if [[ "${forbidden_branches[@]}" =~ "${remote_ref##refs/heads/}" ]]; then
-    echo "Detected push to forbidden branch."
+    echo "Detected push to forbidden branch. Canceled your pushing."
     exit 1
   fi
 done
