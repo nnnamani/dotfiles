@@ -213,12 +213,13 @@
 (use-package sass-mode
   :mode "\\.sass$")
 
-;;; js2-mode
-(use-package js2-mode
-  :mode (("\\.js$" . js2-mode)
-         ("\\.json$" . js2-mode))
+;;; js
+(use-package rjsx-mode
+  :mode (("\\.js$" . rjsx-mode)
+         ("\\.json$" . rjsx-mode))
   :config
   (setq my-js-mode-indent-num 2)
+  (setq js-indent-level my-js-mode-indent-num)
   (setq js2-basic-offset my-js-mode-indent-num)
   (setq js-switch-indent-offset my-js-mode-indent-num))
 
@@ -553,7 +554,7 @@ r^ Run command in project root
  '(global-hl-line-mode t)
  '(package-selected-packages
    (quote
-    (ghub projectile-direnv lsp-solargraph lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
+    (rjsx-mode ghub projectile-direnv lsp-solargraph lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
  '(rspec-use-rake-when-possible nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
