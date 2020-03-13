@@ -74,7 +74,7 @@
   (load-theme 'misterioso t)
 
   ;; カーソルの色を変更
-  (set-cursor-color 'yellow)
+  (set-cursor-color "yellow")
 
   ;; 対応する括弧を強調表示する
   (show-paren-mode t)
@@ -464,7 +464,7 @@
 (use-package awesome-tab
   :load-path "./modules/awesome-tab"
   :config
-  (awesome-tab-mode t))
+  (awesome-tab-mode 0))
 
 (use-package hydra
   :init

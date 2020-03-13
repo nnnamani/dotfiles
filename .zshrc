@@ -1,7 +1,7 @@
-export PATH=$PATH:/usr/local/bin
+export PATH=$PATH:/usr/local/bin:$HOME/go/bin
 
 export TERM="xterm-256color"
-export ZPLUG_HOME=/usr/local/opt/zplug
+export ZPLUG_HOME=$HOME/dev/github.com/zplug/zplug/
 source $ZPLUG_HOME/init.zsh
 
 # Ctrl+Dでログアウトしてしまうことを防ぐ
@@ -71,6 +71,7 @@ alias sz='source ~/.zshrc'
 alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 alias julia='/Applications/Julia-1.3.app/Contents/Resources/julia/bin/julia'
 alias gpg="LANG=en_US.utf-8 gpg"
+alias fd=fdfind
 alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 alias enable_mac_keyboard="sudo kextload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 
@@ -105,7 +106,8 @@ zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # fzf
-source /usr/local/Cellar/fzf/0.20.0/shell/completion.zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#source /usr/local/Cellar/fzf/0.20.0/shell/completion.zsh
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
 
