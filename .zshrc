@@ -69,7 +69,11 @@ alias back='pushd'
 alias diff='diff -U1'
 alias sz='source ~/.zshrc'
 alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
-alias julia='/Applications/Julia-1.3.app/Contents/Resources/julia/bin/julia'
+
+if [ "$(uname)" = 'Darwin' ]; then
+    alias julia='/Applications/Julia-1.3.app/Contents/Resources/julia/bin/julia'
+fi
+
 alias gpg="LANG=en_US.utf-8 gpg"
 alias fd=fdfind
 alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
