@@ -466,6 +466,12 @@
   :config
   (awesome-tab-mode 0))
 
+(use-package adoc-mode
+  :commands (adoc-mode buffer-face-mode)
+  :mode (("\\.adoc\\'" . adoc-mode)
+	 ("\\.asciidoc\\'" . adoc-mode)
+	 ("\\.txt\\'" . adoc-mode)))
+
 (use-package hydra
   :init
   (defun put-file-name-on-clipboard ()
@@ -536,16 +542,21 @@ r^ Run command in project root
  '(global-hl-line-mode t)
  '(package-selected-packages
    (quote
-    (rjsx-mode ghub projectile-direnv lsp-solargraph lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
+    (magit-blame adoc-mode adoc rjsx-mode ghub projectile-direnv lsp-solargraph lsp-mode hydra rspec-mode golden-ratio popwin go-mode git-commit undo-tree ess ess-site shell-mode shell-script-mode flycheck helm-ag real-auto-save auto-save-buffers-enhanced auto-package-update use-package-ensure rbenv irb-ruby emacs-pry pry swiper-helm symbol-overlay ruby-electric projectile-rails nginx-mode scss-mode sass-mode haml-mode company helm-config helm magit neotree twittering-mode rainbow-delimiters jedi quelpa-use-package init-loader exec-path-from-shell diminish)))
  '(rspec-use-rake-when-possible nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(adoc-align ((t (:inherit default))))
  '(helm-candidate-number ((t (:foreground "#00afff"))))
  '(helm-header ((t (:background "#3a3a3a" :underline nil))))
  '(helm-match ((t (:foreground "darkolivegreen3"))))
  '(helm-selection ((t (:background "#005f87" :weight normal))))
  '(helm-source-header ((t (:background "gray16" :foreground "gray64" :slant italic))))
- '(hl-line ((t (:inherit highlight :background "dark slate blue")))))
+ '(hl-line ((t (:inherit highlight :background "dark slate blue"))))
+ '(markup-anchor-face ((t (:inherit default :overline t))))
+ '(markup-attribute-face ((t (:inherit default :slant italic))))
+ '(markup-meta-face ((t (:stipple nil :foreground "brightwhite" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "unknown" :family "Monospace"))))
+ '(markup-meta-hide-face ((t (:inherit markup-meta-face :foreground "magenta" :height 0.8)))))

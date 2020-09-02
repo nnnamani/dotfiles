@@ -75,12 +75,12 @@ if [ "$(uname)" = 'Darwin' ]; then
 fi
 
 alias gpg="LANG=en_US.utf-8 gpg"
-alias fd=fdfind
+#alias fd=fdfind
 alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 alias enable_mac_keyboard="sudo kextload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
 
 # emacs
-alias em='emacsclient -t'
+alias em='emacsclient -a "" -nw'
 alias show-colors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%16)) -eq 15 ] && echo;done;echo'
 
 # git utils
@@ -88,9 +88,12 @@ alias sb='git checkout $(git branch | grep -v "^*" | tr -d "[:blank:]" | fzf)'
 
 alias killall_chrome='kill $(ps -ax | grep "Google Chrome" | grep -v "grep" | awk "{print $1}")'
 
+alias git_add="git status -s | fzf -m | awk '{print \"git add \"\$2}' | sh"
+
+eval "$(direnv hook zsh)"
 chpwd() {
     if [ -e ./.envrc ]; then
-        direnv allow
+        direnv allow .
     fi
 }
 
@@ -309,3 +312,4 @@ if ! zplug check --verbose; then
 fi
 
 zplug load
+if [ -e /Users/yujisuzuki/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/yujisuzuki/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
