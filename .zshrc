@@ -129,10 +129,6 @@ _fzf_compgen_dir() {
   fd --type d --hidden --follow --exclude ".git" . "$1"
 }
 
-export FZF_COMPLETION_TRIGGER=''
-bindkey '^T' fzf-completion
-bindkey '^I' $fzf_default_completion
-
 # Ctrl+rでヒストリーのインクリメンタルサーチ、Ctrl+sで逆順
 ## fzf
 fzf-select-history() {
