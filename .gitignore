@@ -1,8 +1,10 @@
 .emacs.d/.last-package-update-day
 .emacs.d/async-bytecomp.log
+.emacs.d/backup
 .emacs.d/elpa
 .emacs.d/auto-save-list/
 .emacs.d/bookmarks
 .emacs.d/recentf
 .emacs.d/session.*
+.emacs.d/straight
 .emacs.d/transient/
