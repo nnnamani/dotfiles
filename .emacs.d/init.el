@@ -62,7 +62,10 @@
         `((".*" ,(expand-file-name (concat user-emacs-directory "/backup")) t)))
 
   (when (version<= "26.0.50" emacs-version)
-    (global-display-line-numbers-mode)))
+    (global-display-line-numbers-mode))
+
+  (when (member "Myrica M" (font-family-list))
+    (set-frame-font "Myrica M-10")))
 
 
 (leaf *global-modes
@@ -88,6 +91,7 @@
   (leaf *global
     :config
     (global-set-key (kbd "C-h") #'backward-delete-char)))
+
 
 (leaf doom-themes
   :config
@@ -129,3 +133,50 @@
     :straight t
     :hook
     (imenu-list-major-mode-hook . hide-mode-line-mode)))
+
+(leaf ivy
+  :ensure t swiper counsel
+  :hook (after-init-hook . ivy-mode)
+  :custom
+  (ivy-use-virtual-buffers . t)
+  (enable-recursive-minibuffers . t)
+  (ivy-height . 15)
+  (ivy-extra-directories . nil)
+  (ivy-re-builders-alist. '((t . ivy--regex-plus)))
+  :config
+  (global-set-key "\C-s" 'swiper)
+  (global-set-key "\C-r" 'ivy-resume)
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+  (defvar swiper-include-line-number-in-search t)
+
+  (leaf avy-migemo
+    :ensure t
+    :hook (ivy-mode-hook . avy-migemo-mode))
+
+  (leaf ivy-rich
+    :ensure t all-the-icons-ivy all-the-icons
+    :hook (ivy-mode-hook . ivy-rich-mode)
+    :preface
+    (defun ivy-rich-switch-buffer-icon (candidate)
+      (with-current-buffer
+          (get-buffer candidate)
+        (let ((icon (all-the-icons-icon-for-mode major-mode)))
+          (if (symbolp icon)
+              (all-the-icons-icon-for-mode 'fundamental-mode)
+            icon))))
+    :config
+    (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-arrow)
+    (setq ivy-rich--display-transformers-list
+          '(ivy-switch-buffer
+            (:columns
+             ((ivy-rich-switch-buffer-icon :width 2)
+              (ivy-rich-candidate (:width 30))
+              (ivy-rich-switch-buffer-size (:width 7))
+              (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
+              (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
+              (ivy-rich-switch-buffer-project (:width 15 :face success))
+              (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
+             :predicate
+             (lambda (cand) (get-buffer cand)))))))
