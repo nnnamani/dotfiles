@@ -65,7 +65,7 @@
     (global-display-line-numbers-mode))
 
   (when (member "Myrica M" (font-family-list))
-    (set-frame-font "Myrica M-10")))
+    (set-frame-font "Myrica M-11")))
 
 
 (leaf *global-modes
