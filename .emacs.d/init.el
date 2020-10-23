@@ -94,6 +94,7 @@
 
 
 (leaf doom-themes
+  :ensure t
   :config
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -107,6 +108,7 @@
 (leaf *mode-lines
   :config
   (leaf nyan-mode
+    :ensure t
     :straight t
     :custom
     (nyan-animate-nyancat . t)
@@ -114,6 +116,7 @@
     (emacs-startup-hook . nyan-mode))
 
   (leaf doom-modeline
+    :ensure t
     :straight t
     :commands doom-modeline-def-modeline
     :custom
@@ -130,6 +133,7 @@
       '(misc-info debug minor-modes input-method lsp major-mode process vcs checker)))
 
   (leaf hide-mode-line
+    :ensure t
     :straight t
     :hook
     (imenu-list-major-mode-hook . hide-mode-line-mode)))
