@@ -184,3 +184,20 @@
               (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
              :predicate
              (lambda (cand) (get-buffer cand)))))))
+
+(leaf *common-lisp
+  :config
+  (leaf *roswell-slime
+    :config
+    (when (file-exists-p "~/.roswell/helper.el")
+      (load (expand-file-name "~/.roswell/helper.el"))))
+  (leaf *qlot
+    :config
+    (defun slime-qlot-exec (directory)
+      (interactive (list (read-directory-name "Project directory: ")))
+      (slime-start :program "qlot"
+		   :program-args '("exec" "ros" "-S" "." "run")
+		   :directory directory
+		   :name 'qlot
+		   :env (list (concat "PATH=" (mapconcat 'identity exec-path ":")))))))
+
