@@ -201,3 +201,81 @@
 		   :name 'qlot
 		   :env (list (concat "PATH=" (mapconcat 'identity exec-path ":")))))))
 
+
+(leaf undo-tree
+  :ensure t
+  :bind
+  ("M-/" . undo-tree-redo)
+  ("M-u" . undo-tree-visualize)
+  :config
+  (global-undo-tree-mode))
+
+
+(leaf org
+  :ensure t
+  :config
+  (leaf org-capture
+    :config
+    (setq work-directory "~/.org/")
+    (setq taskfile (concat work-directory "TODO.org"))
+    (setq notefile (concat work-directory "NOTE.org"))
+    (setq org-capture-templates
+	  '(
+	    ;; タスク（スケジュールなし）
+	    ("t" "タスク（スケジュールなし）" entry (file+headline taskfile "Tasks")
+	     "** TODO %? \n")
+	    ;; タスク（スケジュールあり）
+	    ("s" "タスク（スケジュールあり）" entry (file+headline taskfile "Tasks")
+	     "** TODO %? \n   SCHEDULED: %^t \n")
+	    ("n" "メモ" entry (file+headline notefile "Notes")
+	     "** %? \n   CAPTURED_AT: %a\n")))
+    (defun show-org-buffer (file)
+      "Show an org-file FILE on the current buffer."
+      (interactive)
+      (if (get-buffer file)
+	  (let ((buffer (get-buffer file)))
+	    (switch-to-buffer buffer)
+	    (message "%s" file))
+	(find-file (concat work-directory file))))
+    (global-set-key (kbd "C-c o c") #'org-capture)
+    (global-set-key (kbd "C-c o n ") '(lambda () (interactive)
+				     (show-org-buffer "NOTE.org")))))
+
+(leaf which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
+(leaf *eshell
+  :config
+  (setq eshell-prompt-function
+	(lambda ()
+	  (format "%s %s\n%s%s%s "
+		  (all-the-icons-octicon "repo")
+		  (propertize (cdr (shrink-path-prompt default-directory)) 'face `(:foreground "white"))
+		  (propertize "❯" 'face `(:foreground "#ff79c6"))
+		  (propertize "❯" 'face `(:foreground "#f1fa8c"))
+		  (propertize "❯" 'face `(:foreground "#50fa7b")))))
+
+  (setq eshell-hist-ignoredups t)
+  (setq eshell-cmpl-cycle-completions nil)
+  (setq eshell-cmpl-ignore-case t)
+  (setq eshell-ask-to-save-history (quote always))
+  (setq eshell-prompt-regexp "❯❯❯ ")
+  (add-hook 'eshell-mode-hook
+	    '(lambda ()
+	       (progn
+		 (define-key eshell-mode-map "\C-a" 'eshell-bol)
+		 (define-key eshell-mode-map "\C-r" 'counsel-esh-history)
+		 (define-key eshell-mode-map [up] 'previous-line)
+		 (define-key eshell-mode-map [down] 'next-line)
+		 ))))
+
+(leaf rainbow-delimiters
+  :ensure t
+  :hook
+  (prog-mode . rainbow-delimiters-mode))
+
+
+(leaf json-reformat
+  :ensure t)
