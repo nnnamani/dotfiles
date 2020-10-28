@@ -229,6 +229,7 @@
 	     "** TODO %? \n   SCHEDULED: %^t \n")
 	    ("n" "メモ" entry (file+headline notefile "Notes")
 	     "** %? \n   CAPTURED_AT: %a\n")))
+    (setq org-agenda-files (list work-directory))
     (defun show-org-buffer (file)
       "Show an org-file FILE on the current buffer."
       (interactive)
@@ -239,7 +240,8 @@
 	(find-file (concat work-directory file))))
     (global-set-key (kbd "C-c o c") #'org-capture)
     (global-set-key (kbd "C-c o n ") '(lambda () (interactive)
-				     (show-org-buffer "NOTE.org")))))
+					(show-org-buffer "NOTE.org")))
+    (global-set-key (kbd "C-c o a") #'org-agenda)))
 
 (leaf which-key
   :ensure t
@@ -273,8 +275,7 @@
 
 (leaf rainbow-delimiters
   :ensure t
-  :hook
-  (prog-mode . rainbow-delimiters-mode))
+  :hook ((prog-mode-hook) . rainbow-delimiters-mode))
 
 
 (leaf json-reformat
