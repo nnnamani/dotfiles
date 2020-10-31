@@ -26,15 +26,15 @@
 
   (defvar bootstrap-version)
   (let ((bootstrap-file
-	 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-	(bootstrap-version 5))
+	     (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+	    (bootstrap-version 5))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
-	  (url-retrieve-synchronously
-	   "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-	   'silent 'inhibit-cookies)
-	(goto-char (point-max))
-	(eval-print-last-sexp)))
+	      (url-retrieve-synchronously
+	       "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	       'silent 'inhibit-cookies)
+	    (goto-char (point-max))
+	    (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
   (straight-use-package 'leaf)
@@ -43,11 +43,21 @@
 
 (leaf *standard-configuration
   :config
+
+  (leaf exec-path-from-shell
+    :ensure t
+    :when (memq window-system '(mac ns x))
+    :config
+    (exec-path-from-shell-initialize))
+
   (setq-default bidi-display-reordering nil)
+
   (set-language-environment 'Japanese)
+
   (set-keyboard-coding-system 'utf-8)
 
   (setq buffer-file-coding-system 'utf-8-unix)
+
   (prefer-coding-system 'utf-8-unix)
 
   (blink-cursor-mode 0)
@@ -58,6 +68,7 @@
 
   (setq backup-directory-alist
         `((".*" . ,(expand-file-name (concat user-emacs-directory "/backup")))))
+
   (setq auto-save-file-name-transforms
         `((".*" ,(expand-file-name (concat user-emacs-directory "/backup")) t)))
 
@@ -65,11 +76,7 @@
     (global-display-line-numbers-mode))
 
   (when (member "Myrica M" (font-family-list))
-    (set-frame-font "Myrica M-11")))
-
-
-(leaf *global-modes
-  :config
+    (set-frame-font "Myrica M-11"))
 
   (global-font-lock-mode +1)
 
@@ -82,15 +89,22 @@
   (menu-bar-mode -1)
 
   (tool-bar-mode -1)
+
   (line-number-mode 0)
-  (column-number-mode 0))
+
+  (column-number-mode 0)
+
+  (setq-default indent-tabs-mode nil)
+
+  (setq-default tab-width 4))
 
 
 (leaf *key-binding
   :config
   (leaf *global
     :config
-    (global-set-key (kbd "C-h") #'backward-delete-char)))
+    (global-set-key (kbd "C-h") #'backward-delete-char)
+    (global-set-key (kbd "s-u") #'revert-buffer)))
 
 
 (leaf doom-themes
@@ -196,10 +210,10 @@
     (defun slime-qlot-exec (directory)
       (interactive (list (read-directory-name "Project directory: ")))
       (slime-start :program "qlot"
-		   :program-args '("exec" "ros" "-S" "." "run")
-		   :directory directory
-		   :name 'qlot
-		   :env (list (concat "PATH=" (mapconcat 'identity exec-path ":")))))))
+		           :program-args '("exec" "ros" "-S" "." "run")
+		           :directory directory
+		           :name 'qlot
+		           :env (list (concat "PATH=" (mapconcat 'identity exec-path ":")))))))
 
 
 (leaf undo-tree
@@ -220,27 +234,27 @@
     (setq taskfile (concat work-directory "TODO.org"))
     (setq notefile (concat work-directory "NOTE.org"))
     (setq org-capture-templates
-	  '(
-	    ;; タスク（スケジュールなし）
-	    ("t" "タスク（スケジュールなし）" entry (file+headline taskfile "Tasks")
-	     "** TODO %? \n")
-	    ;; タスク（スケジュールあり）
-	    ("s" "タスク（スケジュールあり）" entry (file+headline taskfile "Tasks")
-	     "** TODO %? \n   SCHEDULED: %^t \n")
-	    ("n" "メモ" entry (file+headline notefile "Notes")
-	     "** %? \n   CAPTURED_AT: %a\n")))
+	      '(
+	        ;; タスク（スケジュールなし）
+	        ("t" "タスク（スケジュールなし）" entry (file+headline taskfile "Tasks")
+	         "** TODO %? \n")
+	        ;; タスク（スケジュールあり）
+	        ("s" "タスク（スケジュールあり）" entry (file+headline taskfile "Tasks")
+	         "** TODO %? \n   SCHEDULED: %^t \n")
+	        ("n" "メモ" entry (file+headline notefile "Notes")
+	         "** %? \n   CAPTURED_AT: %a\n")))
     (setq org-agenda-files (list work-directory))
     (defun show-org-buffer (file)
       "Show an org-file FILE on the current buffer."
       (interactive)
       (if (get-buffer file)
-	  (let ((buffer (get-buffer file)))
-	    (switch-to-buffer buffer)
-	    (message "%s" file))
-	(find-file (concat work-directory file))))
+	      (let ((buffer (get-buffer file)))
+	        (switch-to-buffer buffer)
+	        (message "%s" file))
+	    (find-file (concat work-directory file))))
     (global-set-key (kbd "C-c o c") #'org-capture)
     (global-set-key (kbd "C-c o n ") '(lambda () (interactive)
-					(show-org-buffer "NOTE.org")))
+					                    (show-org-buffer "NOTE.org")))
     (global-set-key (kbd "C-c o a") #'org-agenda)))
 
 (leaf which-key
@@ -251,13 +265,13 @@
 (leaf *eshell
   :config
   (setq eshell-prompt-function
-	(lambda ()
-	  (format "%s %s\n%s%s%s "
-		  (all-the-icons-octicon "repo")
-		  (propertize (cdr (shrink-path-prompt default-directory)) 'face `(:foreground "white"))
-		  (propertize "❯" 'face `(:foreground "#ff79c6"))
-		  (propertize "❯" 'face `(:foreground "#f1fa8c"))
-		  (propertize "❯" 'face `(:foreground "#50fa7b")))))
+	    (lambda ()
+	      (format "%s %s\n%s%s%s "
+		          (all-the-icons-octicon "repo")
+		          (propertize (cdr (shrink-path-prompt default-directory)) 'face `(:foreground "white"))
+		          (propertize "❯" 'face `(:foreground "#ff79c6"))
+		          (propertize "❯" 'face `(:foreground "#f1fa8c"))
+		          (propertize "❯" 'face `(:foreground "#50fa7b")))))
 
   (setq eshell-hist-ignoredups t)
   (setq eshell-cmpl-cycle-completions nil)
@@ -265,13 +279,13 @@
   (setq eshell-ask-to-save-history (quote always))
   (setq eshell-prompt-regexp "❯❯❯ ")
   (add-hook 'eshell-mode-hook
-	    '(lambda ()
-	       (progn
-		 (define-key eshell-mode-map "\C-a" 'eshell-bol)
-		 (define-key eshell-mode-map "\C-r" 'counsel-esh-history)
-		 (define-key eshell-mode-map [up] 'previous-line)
-		 (define-key eshell-mode-map [down] 'next-line)
-		 ))))
+	        '(lambda ()
+	           (progn
+		         (define-key eshell-mode-map "\C-a" 'eshell-bol)
+		         (define-key eshell-mode-map "\C-r" 'counsel-esh-history)
+		         (define-key eshell-mode-map [up] 'previous-line)
+		         (define-key eshell-mode-map [down] 'next-line)
+		         ))))
 
 (leaf rainbow-delimiters
   :ensure t
@@ -280,3 +294,38 @@
 
 (leaf json-reformat
   :ensure t)
+
+
+(leaf rust-mode
+  :ensure (cargo company flycheck flycheck-rust lsp-mode lsp-ui)
+  :hook
+  (rust-mode-hook . cargo-minor-mode)
+  (rust-mode-hook . (lambda ()
+		              (flycheck-rust-setup)
+		              (setq lsp-rust-server 'rust-analyzer)
+		              (lsp)
+		              (flycheck-mode)))
+  :config
+  (setq lsp-prefer-capf t)
+  (setq rust-format-on-save t))
+
+(leaf *ghq
+  :after ivy
+  :init
+  (defun ghq--root ()
+    (car (split-string (shell-command-to-string "ghq root"))))
+  (defun ghq--github-file-list ()
+    (let ((github-dir (mapconcat 'identity (list (ghq--root) "github.com") "/")))
+      (split-string (shell-command-to-string (concat "find " github-dir " -type d -name .git -prune -o -type f -print")))))
+  (defun ghq-ivy-find-file ()
+    (interactive)
+    (ivy-read "Search file in ghq github.com root: "
+              (ghq--github-file-list)
+              :action '(1
+                        ("o" (lambda (x)
+                               (find-file x))))))
+  :bind
+  ("C-c C-g C-f" . ghq-ivy-find-file))
+  
+
+  
