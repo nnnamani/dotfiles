@@ -227,6 +227,8 @@
 
 (leaf org
   :ensure t
+  :bind
+  (("C-c o u c" . org-update-checkbox-count))
   :config
   (leaf org-capture
     :config
