@@ -234,15 +234,12 @@
     (setq taskfile (concat work-directory "TODO.org"))
     (setq notefile (concat work-directory "NOTE.org"))
     (setq org-capture-templates
-	      '(
-	        ;; タスク（スケジュールなし）
-	        ("t" "タスク（スケジュールなし）" entry (file+headline taskfile "Tasks")
-	         "** TODO %? \n")
-	        ;; タスク（スケジュールあり）
-	        ("s" "タスク（スケジュールあり）" entry (file+headline taskfile "Tasks")
-	         "** TODO %? \n   SCHEDULED: %^t \n")
-	        ("n" "メモ" entry (file+headline notefile "Notes")
-	         "** %? \n   CAPTURED_AT: %a\n")))
+	      '(("t" "タスク（スケジュールなし）" entry (file+headline taskfile "Tasks")
+             "** TODO %? \n")
+            ("s" "タスク（スケジュールあり）" entry (file+headline taskfile "Tasks")
+             "** TODO %? \n   SCHEDULED: %^t \n")
+            ("n" "メモ" entry (file+headline notefile "Notes")
+             "** %? \n   CAPTURED_AT: %a\n")))
     (setq org-agenda-files (list work-directory))
     (defun show-org-buffer (file)
       "Show an org-file FILE on the current buffer."
@@ -295,6 +292,23 @@
 (leaf json-reformat
   :ensure t)
 
+(leaf company
+  :ensure t
+  :bind
+  ((:company-active-map
+    ("C-n" . company-select-next)
+    ("C-p" . company-select-previous)
+    ("<tab>" . company-complete-selection)
+    ("C-h" . nil)
+    ("C-S-h" . company-show-doc-buffer)))
+  :hook
+  `((after-init . global-company-mode)
+    (minibuffer-setup-hook . ,(lambda ()
+                                (company-mode -1))))
+  :custom
+  ((company-idle-delay . 0)
+   (company-selection-wrap-around . t)))
+  
 
 (leaf rust-mode
   :ensure (cargo company flycheck flycheck-rust lsp-mode lsp-ui)
@@ -327,5 +341,31 @@
   :bind
   ("C-c C-g C-f" . ghq-ivy-find-file))
   
+
+(leaf ace-window
+  :ensure t
+  :bind
+  (("C-x o" . ace-window))
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :custom-face
+  (aw-leading-char-face . '((t (:height 3.0)))))
+
+
+(leaf yasnippet
+  :ensure t
+  :require t
+  :defun yas-global-mode
+  :bind
+  (:yas-minor-mode-map
+   ("C-x i i" . yas-insert-snippet)
+   ("C-x i n" . yas-new-snippet)
+   ("C-x i v" . yas-visit-snippet-file)
+   ("C-x i l" . yas-describe-tables)
+   ("C-x i g" . yas-reload-all))
+  :hook
+  (after-init . yas-global-mode)
+  :config
+  (setq yas-prompt-functions '(yas-ido-prompt)))
 
   
