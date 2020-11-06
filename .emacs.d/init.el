@@ -227,8 +227,6 @@
 
 (leaf org
   :ensure t
-  :bind
-  (("C-c o u c" . org-update-checkbox-count))
   :config
   (leaf org-capture
     :config
@@ -371,3 +369,17 @@
   (setq yas-prompt-functions '(yas-ido-prompt)))
 
   
+
+(leaf anzu
+  :ensure t
+  :config
+  (global-anzu-mode 1))
+
+
+(leaf multiple-cursors
+  :ensure t
+  :config
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
