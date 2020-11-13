@@ -94,6 +94,8 @@
 
   (column-number-mode 0)
 
+  (delete-selection-mode t)
+
   (setq-default indent-tabs-mode nil)
 
   (setq-default tab-width 4))
@@ -282,6 +284,7 @@
 		         (define-key eshell-mode-map "\C-r" 'counsel-esh-history)
 		         (define-key eshell-mode-map [up] 'previous-line)
 		         (define-key eshell-mode-map [down] 'next-line)
+                 (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
 		         ))))
 
 (leaf rainbow-delimiters
@@ -383,3 +386,4 @@
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+
