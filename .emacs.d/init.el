@@ -230,19 +230,28 @@
 (leaf org
   :ensure t
   :config
+  (setq system-time-locale "C")
   (leaf org-capture
     :config
     (setq work-directory "~/.org/")
+    (setq gtd-directory "~/.gtd/")
+    (setq gtd-inbox (concat gtd-directory "Inbox.org"))
+    (setq gtd-idea (concat gtd-directory "Idea.org"))
     (setq taskfile (concat work-directory "TODO.org"))
     (setq notefile (concat work-directory "NOTE.org"))
     (setq org-capture-templates
-	      '(("t" "タスク（スケジュールなし）" entry (file+headline taskfile "Tasks")
-             "** TODO %? \n")
+	      '(("t" "タスク（スケジュールなし）" entry (file+headline gtd-inbox "Inbox")
+             "** TASK %?\n   CREATED: %U\n")
             ("s" "タスク（スケジュールあり）" entry (file+headline taskfile "Tasks")
-             "** TODO %? \n   SCHEDULED: %^t \n")
+             "** TODO %?\n   SCHEDULED: %^t\n")
             ("n" "メモ" entry (file+headline notefile "Notes")
-             "** %? \n   CAPTURED_AT: %a\n")))
-    (setq org-agenda-files (list work-directory))
+             "** %? \n   CREATED: %U\n")
+            ("i" "アイデア" entry (file+headline gtd-idea "Idea")
+             "** %?\n   CREATED: %U\n")))
+    (setq org-todo-keywords
+          '((sequence "TASK(t)" "WAIT(w)" "|" "DONE(d)" "ABORT(a)" "SOMEDAY(s)")))
+    (setq org-tag-alist '(("PROJECT" . ?p) ("MEMO" . ?m) ("PETIT" . ?t)))
+    (setq org-agenda-files (list work-directory gtd-directory))
     (defun show-org-buffer (file)
       "Show an org-file FILE on the current buffer."
       (interactive)
@@ -250,10 +259,14 @@
 	      (let ((buffer (get-buffer file)))
 	        (switch-to-buffer buffer)
 	        (message "%s" file))
-	    (find-file (concat work-directory file))))
+	    (find-file file)))
     (global-set-key (kbd "C-c o c") #'org-capture)
-    (global-set-key (kbd "C-c o n ") '(lambda () (interactive)
-					                    (show-org-buffer "NOTE.org")))
+    (global-set-key (kbd "C-c o n") '(lambda () (interactive)
+					                    (show-org-buffer taskfile)))
+    (global-set-key (kbd "C-c o i") '(lambda () (interactive)
+					                    (show-org-buffer gtd-idea)))
+    (global-set-key (kbd "C-c o t") '(lambda () (interactive)
+					                   (show-org-buffer gtd-inbox)))
     (global-set-key (kbd "C-c o a") #'org-agenda)))
 
 (leaf which-key

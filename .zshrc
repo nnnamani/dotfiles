@@ -237,6 +237,8 @@ if type goenv >/dev/null 2>&1; then
     eval "$(goenv init -)";
 fi
 
+export PATH="$HOME/.cargo/bin:$PATH"
+
 # kubectl completion
 if type kubectl >/dev/null 2>&1; then
     source <(kubectl completion zsh)
