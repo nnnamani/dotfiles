@@ -98,7 +98,10 @@
 
   (setq-default indent-tabs-mode nil)
 
-  (setq-default tab-width 4))
+  (setq-default tab-width 4)
+
+  (setq-default show-trailing-whitespace t)
+  (set-face-background 'trailing-whitespace "#b14770"))
 
 
 (leaf *key-binding
@@ -400,3 +403,6 @@
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
+(leaf shell-script
+  :config
+  (setq sh-basic-offset 2))
