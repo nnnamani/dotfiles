@@ -271,5 +271,10 @@ if [ -e $HOME/.zshrc_local ]; then
     source $HOME/.zshrc_local
 fi
 
+if [ -d $HOME/.anyenv ]; then
+    export PATH="$HOME/.anyenv/bin:$PATH"
+    eval "$(anyenv init -)"
+fi
+
 # Initialize Starship
 eval "$(starship init zsh)"

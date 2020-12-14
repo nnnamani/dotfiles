@@ -154,6 +154,16 @@
     :hook
     (imenu-list-major-mode-hook . hide-mode-line-mode)))
 
+
+;; Search/Replace
+(leaf ag
+  :ensure t)
+
+(leaf anzu
+  :ensure t
+  :config
+  (global-anzu-mode 1))
+
 (leaf ivy
   :ensure t swiper counsel
   :hook (after-init-hook . ivy-mode)
@@ -201,31 +211,51 @@
              :predicate
              (lambda (cand) (get-buffer cand)))))))
 
-(leaf *common-lisp
-  :config
-  (leaf *roswell-slime
-    :config
-    (when (file-exists-p "~/.roswell/helper.el")
-      (load (expand-file-name "~/.roswell/helper.el"))))
-  (leaf *qlot
-    :config
-    (defun slime-qlot-exec (directory)
-      (interactive (list (read-directory-name "Project directory: ")))
-      (slime-start :program "qlot"
-		           :program-args '("exec" "ros" "-S" "." "run")
-		           :directory directory
-		           :name 'qlot
-		           :env (list (concat "PATH=" (mapconcat 'identity exec-path ":")))))))
 
-
-(leaf undo-tree
+;; Helpers
+(leaf ace-window
   :ensure t
   :bind
-  ("M-/" . undo-tree-redo)
-  ("M-u" . undo-tree-visualize)
+  (("C-x o" . ace-window))
   :config
-  (global-undo-tree-mode))
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :custom-face
+  (aw-leading-char-face . '((t (:height 3.0)))))
 
+(leaf company
+  :ensure t
+  :bind
+  ((:company-active-map
+    ("C-n" . company-select-next)
+    ("C-p" . company-select-previous)
+    ("<tab>" . company-complete-selection)
+    ("C-h" . nil)
+    ("C-S-h" . company-show-doc-buffer)))
+  :hook
+  `((after-init . global-company-mode)
+    (minibuffer-setup-hook . ,(lambda ()
+                                (company-mode -1))))
+  :custom
+  ((company-idle-delay . 0)
+   (company-selection-wrap-around . t)))  
+
+(leaf *ghq
+  :after ivy
+  :init
+  (defun ghq--root ()
+    (car (split-string (shell-command-to-string "ghq root"))))
+  (defun ghq--github-file-list ()
+    (let ((github-dir (mapconcat 'identity (list (ghq--root) "github.com") "/")))
+      (split-string (shell-command-to-string (concat "find " github-dir " -type d -name .git -prune -o -type f -print")))))
+  (defun ghq-ivy-find-file ()
+    (interactive)
+    (ivy-read "Search file in ghq github.com root: "
+              (ghq--github-file-list)
+              :action '(1
+                        ("o" (lambda (x)
+                               (find-file x))))))
+  :bind
+  ("C-c C-g C-f" . ghq-ivy-find-file))
 
 (leaf org
   :ensure t
@@ -269,11 +299,59 @@
 					                   (show-org-buffer gtd-inbox)))
     (global-set-key (kbd "C-c o a") #'org-agenda)))
 
+(leaf counsel-projectile
+  :ensure (projectile)
+  :bind
+  (:projectile-mode-map
+   ("C-c p" . projectile-command-map))
+  :config
+  (counsel-projectile-mode 1))
+
+(leaf rainbow-delimiters
+  :ensure t
+  :hook ((prog-mode-hook) . rainbow-delimiters-mode))
+
+(leaf undo-tree
+  :ensure t
+  :bind
+  ("M-/" . undo-tree-redo)
+  ("M-u" . undo-tree-visualize)
+  :config
+  (global-undo-tree-mode))
+  
 (leaf which-key
   :ensure t
   :config
   (which-key-mode))
 
+(leaf yasnippet
+  :ensure t
+  :require t
+  :defun yas-global-mode
+  :bind
+  (:yas-minor-mode-map
+   ("C-x i i" . yas-insert-snippet)
+   ("C-x i n" . yas-new-snippet)
+   ("C-x i v" . yas-visit-snippet-file)
+   ("C-x i l" . yas-describe-tables)
+   ("C-x i g" . yas-reload-all))
+  :hook
+  (after-init . yas-global-mode)
+  :config
+  (setq yas-prompt-functions '(yas-ido-prompt)))
+
+
+;; Cursor
+(leaf multiple-cursors
+  :ensure t
+  :config
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+
+
+;; Shell/Term
 (leaf *eshell
   :config
   (setq eshell-prompt-function
@@ -300,31 +378,26 @@
                  (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
 		         ))))
 
-(leaf rainbow-delimiters
-  :ensure t
-  :hook ((prog-mode-hook) . rainbow-delimiters-mode))
 
+;; Languages
+(leaf *common-lisp
+  :config
+  (leaf *roswell-slime
+    :config
+    (when (file-exists-p "~/.roswell/helper.el")
+      (load (expand-file-name "~/.roswell/helper.el"))))
+  (leaf *qlot
+    :config
+    (defun slime-qlot-exec (directory)
+      (interactive (list (read-directory-name "Project directory: ")))
+      (slime-start :program "qlot"
+		           :program-args '("exec" "ros" "-S" "." "run")
+		           :directory directory
+		           :name 'qlot
+		           :env (list (concat "PATH=" (mapconcat 'identity exec-path ":")))))))
 
 (leaf json-reformat
   :ensure t)
-
-(leaf company
-  :ensure t
-  :bind
-  ((:company-active-map
-    ("C-n" . company-select-next)
-    ("C-p" . company-select-previous)
-    ("<tab>" . company-complete-selection)
-    ("C-h" . nil)
-    ("C-S-h" . company-show-doc-buffer)))
-  :hook
-  `((after-init . global-company-mode)
-    (minibuffer-setup-hook . ,(lambda ()
-                                (company-mode -1))))
-  :custom
-  ((company-idle-delay . 0)
-   (company-selection-wrap-around . t)))
-  
 
 (leaf rust-mode
   :ensure (cargo company flycheck flycheck-rust lsp-mode lsp-ui)
@@ -339,64 +412,4 @@
   (setq lsp-prefer-capf t)
   (setq rust-format-on-save t))
 
-(leaf *ghq
-  :after ivy
-  :init
-  (defun ghq--root ()
-    (car (split-string (shell-command-to-string "ghq root"))))
-  (defun ghq--github-file-list ()
-    (let ((github-dir (mapconcat 'identity (list (ghq--root) "github.com") "/")))
-      (split-string (shell-command-to-string (concat "find " github-dir " -type d -name .git -prune -o -type f -print")))))
-  (defun ghq-ivy-find-file ()
-    (interactive)
-    (ivy-read "Search file in ghq github.com root: "
-              (ghq--github-file-list)
-              :action '(1
-                        ("o" (lambda (x)
-                               (find-file x))))))
-  :bind
-  ("C-c C-g C-f" . ghq-ivy-find-file))
-  
-
-(leaf ace-window
-  :ensure t
-  :bind
-  (("C-x o" . ace-window))
-  :config
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  :custom-face
-  (aw-leading-char-face . '((t (:height 3.0)))))
-
-
-(leaf yasnippet
-  :ensure t
-  :require t
-  :defun yas-global-mode
-  :bind
-  (:yas-minor-mode-map
-   ("C-x i i" . yas-insert-snippet)
-   ("C-x i n" . yas-new-snippet)
-   ("C-x i v" . yas-visit-snippet-file)
-   ("C-x i l" . yas-describe-tables)
-   ("C-x i g" . yas-reload-all))
-  :hook
-  (after-init . yas-global-mode)
-  :config
-  (setq yas-prompt-functions '(yas-ido-prompt)))
-
-  
-
-(leaf anzu
-  :ensure t
-  :config
-  (global-anzu-mode 1))
-
-
-(leaf multiple-cursors
-  :ensure t
-  :config
-  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
