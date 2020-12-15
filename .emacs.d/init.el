@@ -119,7 +119,7 @@
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-dracula t)
-  
+
   (doom-themes-neotree-config)
   ;;(doom-themes-treemacs-config)
   (doom-themes-org-config))
@@ -214,6 +214,15 @@
              :predicate
              (lambda (cand) (get-buffer cand)))))))
 
+(leaf dumb-jump
+  :after ivy
+  :ensure t
+  :config
+  (setq dumb-jump-mode t)
+  (setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-use-visible-window nil)
+  (define-key global-map [(super d)] 'dumb-jump-go)
+  (define-key global-map [(super shift d)] 'dumb-jump-back))
 
 ;; Helpers
 (leaf ace-window
@@ -240,25 +249,15 @@
                                 (company-mode -1))))
   :custom
   ((company-idle-delay . 0)
-   (company-selection-wrap-around . t)))  
+   (company-selection-wrap-around . t)))
 
-(leaf *ghq
-  :after ivy
-  :init
-  (defun ghq--root ()
-    (car (split-string (shell-command-to-string "ghq root"))))
-  (defun ghq--github-file-list ()
-    (let ((github-dir (mapconcat 'identity (list (ghq--root) "github.com") "/")))
-      (split-string (shell-command-to-string (concat "find " github-dir " -type d -name .git -prune -o -type f -print")))))
-  (defun ghq-ivy-find-file ()
-    (interactive)
-    (ivy-read "Search file in ghq github.com root: "
-              (ghq--github-file-list)
-              :action '(1
-                        ("o" (lambda (x)
-                               (find-file x))))))
+(leaf counsel-projectile
+  :ensure (projectile counsel-projectile)
   :bind
-  ("C-c C-g C-f" . ghq-ivy-find-file))
+  (:projectile-mode-map
+   ("C-c p" . projectile-command-map))
+  :config
+  (counsel-projectile-mode 1))
 
 (leaf org
   :ensure t
@@ -275,8 +274,8 @@
     (setq org-capture-templates
 	      '(("t" "タスク（スケジュールなし）" entry (file+headline gtd-inbox "Inbox")
              "** TASK %?\n   CREATED: %U\n")
-            ("s" "タスク（スケジュールあり）" entry (file+headline taskfile "Tasks")
-             "** TODO %?\n   SCHEDULED: %^t\n")
+            ("s" "タスク（スケジュールあり）" entry (file+headline gtd-inbox "Inbox")
+             "** TASK %?\n   SCHEDULED: %^t\n")
             ("n" "メモ" entry (file+headline notefile "Notes")
              "** %? \n   CREATED: %U\n")
             ("i" "アイデア" entry (file+headline gtd-idea "Idea")
@@ -300,15 +299,13 @@
 					                    (show-org-buffer gtd-idea)))
     (global-set-key (kbd "C-c o t") '(lambda () (interactive)
 					                   (show-org-buffer gtd-inbox)))
-    (global-set-key (kbd "C-c o a") #'org-agenda)))
-
-(leaf counsel-projectile
-  :ensure (projectile)
-  :bind
-  (:projectile-mode-map
-   ("C-c p" . projectile-command-map))
-  :config
-  (counsel-projectile-mode 1))
+    (global-set-key (kbd "C-c o a") #'org-agenda))
+  (leaf org-agenda
+    :config
+    (setq org-agenda-skip-scheduled-if-done t)
+    (setq org-agenda-columns-add-appointments-to-effort-sum t)
+    (setq org-columns-default-format
+          "%68ITEM(Task) %6Effort(Effort){:} %6CLOCKSUM(Clock){:}")))
 
 (leaf rainbow-delimiters
   :ensure t
@@ -321,7 +318,7 @@
   ("M-u" . undo-tree-visualize)
   :config
   (global-undo-tree-mode))
-  
+
 (leaf which-key
   :ensure t
   :config
@@ -414,6 +411,24 @@
   :config
   (setq lsp-prefer-capf t)
   (setq rust-format-on-save t))
+
+(leaf *ghq
+  :after ivy
+  :init
+  (defun ghq--root ()
+    (car (split-string (shell-command-to-string "ghq root"))))
+  (defun ghq--github-file-list ()
+    (let ((github-dir (mapconcat 'identity (list (ghq--root) "github.com") "/")))
+      (split-string (shell-command-to-string (concat "find " github-dir " -type d -name .git -prune -o -type f -print")))))
+  (defun ghq-ivy-find-file ()
+    (interactive)
+    (ivy-read "Search file in ghq github.com root: "
+              (ghq--github-file-list)
+              :action '(1
+                        ("o" (lambda (x)
+                               (find-file x))))))
+  :bind
+  ("C-c C-g C-f" . ghq-ivy-find-file))
 
 
 (leaf shell-script
