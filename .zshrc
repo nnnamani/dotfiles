@@ -1,8 +1,6 @@
 export PATH=$PATH:/usr/local/bin:$HOME/go/bin
 
 export TERM="xterm-256color"
-export ZPLUG_HOME=$HOME/dev/github.com/zplug/zplug/
-source $ZPLUG_HOME/init.zsh
 
 # Ctrl+Dでログアウトしてしまうことを防ぐ
 setopt IGNOREEOF
@@ -50,8 +48,6 @@ alias -g H='| head'
 alias -g G='| grep'
 alias -g GI='| grep -ri'
 
-alias repos='ghq list -p | fzf'
-alias cdrepos='cd $(repos)'
 alias lst='ls -ltr --color=auto'
 alias l='ls -ltr --color=auto'
 alias la='ls -la --color=auto'
@@ -61,6 +57,11 @@ alias v='vim'
 alias vi='vim'
 alias vz='vim ~/.zshrc'
 
+
+alias repos='ghq list -p | fzf'
+alias cdrepos='cd $(repos)'
+
+
 # historyに日付を表示
 alias cp='cp -i'
 alias rm='rm -i'
@@ -68,19 +69,19 @@ alias mkdir='mkdir -p'
 alias back='pushd'
 alias diff='diff -U1'
 alias sz='source ~/.zshrc'
-alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 
 if [ "$(uname)" = 'Darwin' ]; then
     alias julia='/Applications/Julia-1.3.app/Contents/Resources/julia/bin/julia'
+    alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
+    alias enable_mac_keyboard="sudo kextload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
+    alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 fi
 
 alias gpg="LANG=en_US.utf-8 gpg"
-#alias fd=fdfind
-alias disable_mac_keyboard="sudo kextunload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
-alias enable_mac_keyboard="sudo kextload /System/Library/Extensions/AppleUSBTopCase.kext/Contents/PlugIns/AppleUSBTCKeyboard.kext/"
+alias fd=fdfind
 
 # emacs
-alias em='emacsclient -a "" -nw'
+alias em='emacsclient -nw -a ""'
 alias show-colors='for c in {000..255}; do echo -n "\e[38;5;${c}m $c" ; [ $(($c%16)) -eq 15 ] && echo;done;echo'
 
 # git utils
@@ -88,12 +89,9 @@ alias sb='git checkout $(git branch | grep -v "^*" | tr -d "[:blank:]" | fzf)'
 
 alias killall_chrome='kill $(ps -ax | grep "Google Chrome" | grep -v "grep" | awk "{print $1}")'
 
-alias git_add="git status -s | fzf -m | awk '{print \"git add \"\$2}' | sh"
-
-eval "$(direnv hook zsh)"
 chpwd() {
     if [ -e ./.envrc ]; then
-        direnv allow .
+        direnv allow
     fi
 }
 
@@ -130,10 +128,6 @@ _fzf_compgen_path() {
 _fzf_compgen_dir() {
   fd --type d --hidden --follow --exclude ".git" . "$1"
 }
-
-export FZF_COMPLETION_TRIGGER=''
-bindkey '^T' fzf-completion
-bindkey '^I' $fzf_default_completion
 
 # Ctrl+rでヒストリーのインクリメンタルサーチ、Ctrl+sで逆順
 ## fzf
@@ -218,57 +212,6 @@ mkcd() {
     fi
 }
 
-prompt() {
-    local separator='%F{green}:%f'
-    PROMPT_1="%m:%c`git-current-branch`"
-    PROMPT_ARROW="%F{135}\U2771%f"
-    print "%F{green}\U2772%f${PROMPT_1}%F{green}\U2773%f\n${PROMPT_ARROW} "
-}
-
-setopt prompt_subst
-precmd() {
-    PROMPT="`prompt`"
-}
-
-# プロンプト
-git-current-branch() {
-    local branch_name st branch_status
-
-    if (git status |& grep 'fatal:'); then return; fi > /dev/null
-
-    branch_name=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
-    after_status=''
-    st=`git status 2> /dev/null`
-    if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
-        branch_status="%F{green}"
-    elif [[ -n `echo "$st" | grep "^Untracked files"` ]]; then
-        branch_status="%F{red}?"
-    elif [[ -n `echo "$st" | grep "^Changes not staged for commit"` ]]; then
-        branch_status="%F{red}+"
-    elif [[ -n `echo "$st" | grep "^Changes to be committed"` ]]; then
-        branch_status="%F{yellow}!"
-    elif [[ -n `echo "$st" | grep "^rebase in progress"` ]]; then
-        branch_status="%F{white}!"
-        after_status="|rebase"
-    elif [[ -n `echo "$st" | grep "^Unmerged paths"` ]]; then
-        branch_status="%F{white}!"
-        after_status="|merge"
-    else
-        branch_status="%F{blue}"
-    fi
-    echo ":${branch_status}${branch_name}${after_status}$(git-branch-status)"
-}
-
-function git-branch-status() {
-    staged=`git status -s | grep -c '^[M|D] '`
-    un_trace=`git status -s | grep -c '^??'`
-    mod=`git status -s | grep -c '^ M'`
-    del=`git status -s | grep -c '^ D'`
-    if [ `expr $un_trace + $mod + $del` -gt 0 ]; then
-        echo "%F{white}(%F{yellow}S:$staged|%F{green}M:$mod%F{white}|%F{blue}D:$del%F{white}|%F{magenta}N:$un_trace%F{white})"
-    fi
-}
-
 # Use gnu readline.
 export LDFLAGS="-L/usr/local/opt/readline/lib"
 export CPPFLAGS="-I/usr/local/opt/readline/include"
@@ -278,38 +221,53 @@ export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
 # rbenv settings
 #
 export PATH=$PATH:$HOME/.rbenv/bin
-eval "$(rbenv init -)"
+if type rbenv >/dev/null 2>&1; then
+    eval "$(rbenv init -)"
+fi
 
 # Node.js
 export PATH=$PATH:$HOME/.nodebrew/current/bin
 
 # Roswell
-export PATH=$PATH:$HOME/.roswell/bin:$HOME/.roswell/bin
+# nix-shell -p autoconf automake curl --command 'sh -c ".bootstrap && ./configure --prefix=$HOME/.roswell && make && make install"'
+#export PATH=$PATH:$HOME/.roswell/bin
 
 # Go
-if which goenv > /dev/null; then eval "$(goenv init -)"; fi
+if type goenv >/dev/null 2>&1; then
+    eval "$(goenv init -)";
+fi
 
 # kubectl completion
-source <(kubectl completion zsh)
+if type kubectl >/dev/null 2>&1; then
+    source <(kubectl completion zsh)
+fi
 
 # docker
 fpath=(~/.zsh/completion $fpath)
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
-zplug zsh-users/zsh-autosuggestions
-zplug zsh-users/zsh-completions
-zplug zsh-users/zsh-syntax-highlighting
+export ZPLUG_HOME=$HOME/src/zplug/zplug/
 
-if [ -e $HOME/.zshrc_local ]; then . $HOME/.zshrc_local; fi
-
-# install zsh plugins with zplug.
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
+if [ -e $ZPLUG_HOME/init.zsh ]; then
+    source $ZPLUG_HOME/init.zsh
+    zplug zsh-users/zsh-autosuggestions
+    zplug zsh-users/zsh-completions
+    zplug zsh-users/zsh-syntax-highlighting
+    install zsh plugins with zplug.
+    if ! zplug check --verbose; then
+        printf "Install? [y/N]: "
+        if read -q; then
+            echo; zplug install
+        fi
     fi
+
+    zplug load
 fi
 
-zplug load
-if [ -e /Users/yujisuzuki/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/yujisuzuki/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+if [ -e $HOME/.zshrc_local ]; then
+    source $HOME/.zshrc_local
+fi
+
+# Initialize Starship
+eval "$(starship init zsh)"
