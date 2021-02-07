@@ -147,11 +147,6 @@ fzf-select-history() {
     zle clear-screen
 }
 
-# fzf-git-add
-fzf-git-add() {
-    git add $(git status -s | grep -v '^[M|A|D] ' | fzf -m --reverse | awk '{print $2}')
-}
-
 zle -N fzf-select-history
 bindkey '^r' fzf-select-history
 
@@ -217,14 +212,6 @@ export LDFLAGS="-L/usr/local/opt/readline/lib"
 export CPPFLAGS="-I/usr/local/opt/readline/include"
 export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
 
-#
-# rbenv settings
-#
-export PATH=$PATH:$HOME/.rbenv/bin
-if type rbenv >/dev/null 2>&1; then
-    eval "$(rbenv init -)"
-fi
-
 # Node.js
 export PATH=$PATH:$HOME/.nodebrew/current/bin
 
@@ -274,6 +261,14 @@ fi
 if [ -d $HOME/.anyenv ]; then
     export PATH="$HOME/.anyenv/bin:$PATH"
     eval "$(anyenv init -)"
+fi
+
+#
+# rbenv settings
+#
+export PATH=$PATH:$HOME/.rbenv/bin
+if type rbenv >/dev/null 2>&1; then
+    eval "$(rbenv init -)"
 fi
 
 # Initialize Starship
