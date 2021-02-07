@@ -237,6 +237,8 @@ if type goenv >/dev/null 2>&1; then
     eval "$(goenv init -)";
 fi
 
+export PATH="$HOME/.cargo/bin:$PATH"
+
 # kubectl completion
 if type kubectl >/dev/null 2>&1; then
     source <(kubectl completion zsh)
@@ -267,6 +269,11 @@ fi
 
 if [ -e $HOME/.zshrc_local ]; then
     source $HOME/.zshrc_local
+fi
+
+if [ -d $HOME/.anyenv ]; then
+    export PATH="$HOME/.anyenv/bin:$PATH"
+    eval "$(anyenv init -)"
 fi
 
 # Initialize Starship
