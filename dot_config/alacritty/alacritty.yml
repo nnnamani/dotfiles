@@ -1,6 +1,3 @@
-import:
-  - ~/.config/dotfiles/current/alacritty/alacritty-colorscheme/themes/gruvbox_material.yml
-
 env:
   TERM: alacritty
 
@@ -12,7 +9,7 @@ shell:
   args:
     - -l
     - -c
-    - "tmux attach || tmux"
+    - 'tmux a -t default || tmux new -s default'
 
 font:
   size: 12
