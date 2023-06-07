@@ -1,0 +1,25 @@
+import:
+  - ~/.config/dotfiles/current/alacritty/alacritty-colorscheme/themes/gruvbox_material.yml
+
+env:
+  TERM: alacritty
+
+window:
+  opacity: 0.95
+
+shell:
+  program: /usr/bin/zsh
+  args:
+    - -l
+    - -c
+    - "tmux attach || tmux"
+
+font:
+  size: 12
+  normal:
+    family: HackGen Console NF
+  bold:
+    family: HackGen Console NF
+  italic:
+    family: HackGen Console NF
+

@@ -1,0 +1,63 @@
+# history settings
+export HISTFILE=${HOME}/.zsh_history
+export HISTSIZE=1000
+export SAVEHIST=100000
+
+setopt hist_ignore_dups
+setopt hist_verify
+setopt hist_reduce_blanks
+setopt hist_ignore_space
+setopt hist_no_store
+setopt share_history
+setopt EXTENDED_HISTORY
+
+# starship
+eval "$(starship init zsh)"
+
+# zplug
+export ZPLUG_HOME=${HOME}/.zplug
+source ${ZPLUG_HOME}/init.zsh
+
+zplug "zsh-users/zsh-syntax-highlighting"
+zplug "zsh-users/zsh-autosuggestions"
+
+if ! zplug check; then
+  printf "Install? [y/N]: "
+  if read -q; then
+    echo; zplug Install
+  fi
+fi
+zplug load
+
+# UI
+autoload -U compinit
+compinit
+zstyle ':completion:*:default' menu select=1
+
+export PATH=$HOME/.local/bin:$PATH
+
+# asdf
+[ -d $HOME/.asdf ] && . $HOME/.asdf/asdf.sh
+
+# Rust cargo
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# fzf select history
+function fzf-select-history() {
+  BUFFER=$(history -n -r 1 | fzf --query "$LBUFFER")
+  CURSOR=$#BUFFER
+  zle reset-prompt
+}
+zle -N fzf-select-history
+bindkey '^r' fzf-select-history
+
+# Flutter
+export ANDROID_HOME=${HOME}/Android/Sdk
+export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
+export PATH="$PATH":"$HOME/.pub-cache/bin"
+
+# Alias
+alias port_num_filter="grep -E '^[0-9]+/' | awk -F'/' '{print $1}' | tr '\n' ',' | sed -e 's/,$//'";
+alias cdrepos='cd $(ghq list -p | fzf)'
+alias coderepo='code $(ghq list -p | fzf)'
+
