@@ -23,7 +23,11 @@ fi
 bindkey -e
 
 # zplug
+# Requirements: brew install zplug
 export ZPLUG_HOME=${HOME}/.zplug
+# For Mac
+export ZPLUG_HOME=/usr/local/opt/zplug
+
 source ${ZPLUG_HOME}/init.zsh
 
 zplug "zsh-users/zsh-syntax-highlighting"
@@ -45,7 +49,7 @@ zstyle ':completion:*:default' menu select=1
 export PATH=$HOME/.local/bin:$PATH
 
 # asdf
-[ -d $HOME/.asdf ] && . $HOME/.asdf/asdf.sh
+[ -f $HOME/.asdf/asdf.sh ] && . $HOME/.asdf/asdf.sh
 
 # Rust cargo
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -59,13 +63,46 @@ function fzf-select-history() {
 zle -N fzf-select-history
 bindkey '^r' fzf-select-history
 
+function select-git-switch() {
+  target_br=$(
+    git branch -a |
+      fzf --exit-0 --layout=reverse --info=hidden --no-multi --preview-window="right,65%" --prompt="CHECKOUT BRANCH > " --preview="echo {} | tr -d ' *' | xargs git lgn --color=always" |
+      head -n 1 |
+      perl -pe "s/\s//g; s/\*//g; s/remotes\/origin\///g"
+  )
+  if [ -n "$target_br" ]; then
+    BUFFER="git switch $target_br"
+    zle accept-line
+  fi
+}
+zle -N select-git-switch
+
 # Flutter
-export ANDROID_HOME=${HOME}/Android/Sdk
-export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
-export PATH="$PATH":"$HOME/.pub-cache/bin"
+# export ANDROID_HOME=${HOME}/Android/Sdk
+# export CHROME_EXECUTABLE=/usr/bin/google-chrome-stable
+# export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 # Alias
 alias port_num_filter="grep -E '^[0-9]+/' | awk -F'/' '{print $1}' | tr '\n' ',' | sed -e 's/,$//'";
 alias cdrepos='cd $(ghq list -p | fzf)'
 alias coderepo='code $(ghq list -p | fzf)'
+
+#
+# for Mac
+#
+export PATH=$PATH:/usr/local/bin:$HOME/go/bin
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+#source /usr/local/Cellar/fzf/0.20.0/shell/completion.zsh
+export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+
+fpath=(~/.zsh/completion $fpath)
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
+
+zle -N fzf-select-history
+
 
