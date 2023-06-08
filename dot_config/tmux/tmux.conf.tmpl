@@ -15,14 +15,12 @@ unbind C-b
 
 
 # for Linux
-# Requirement
-# $ brew install ncurses
-# /usr/local/opt/ncurses/bin/infocmp tmux-256color > ~/tmux-256color.info
-# tic -xe tmux-256color tmux-256color.info
+{{ if eq .chezmoi.os "linux" }}
 set -g default-terminal "tmux-256color"
-
+{{ else if eq .chezmoi.os "darwin" }}
 # for Mac
 set -g default-terminal "screen-256color"
+{{ end }}
 
 set -ag terminal-overrides ",alacritty:RGB"
 
@@ -34,4 +32,8 @@ bind c new-window -c '#{pane_current_path}'
 # enable mouse
 setw -g mouse on
 
+{{ if eq .chezmoi.os "darwin" }}
 run "${TMUX_PLUGIN_MANAGER_PATH}/tpm"
+{{ else if eq .chezmoi.os "linux" }}
+run "${TMUX_PLUGIN_MANAGER_PATH}/tpm/tpm"
+{{ end }}

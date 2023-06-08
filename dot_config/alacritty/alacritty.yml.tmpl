@@ -7,8 +7,11 @@ window:
   opacity: 0.90
 
 shell:
-  #program: /usr/bin/zsh
+{{ if eq .chezmoi.os "linux" }}
+  program: /usr/bin/zsh
+{{ else if eq .chezmoi.os "darwin" }}
   program: /bin/zsh
+{{ end }}
   args:
     - -l
     - -c
