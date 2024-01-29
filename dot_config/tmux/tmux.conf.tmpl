@@ -20,9 +20,8 @@ set -g default-terminal "tmux-256color"
 {{ else if eq .chezmoi.os "darwin" }}
 # for Mac
 set -g default-terminal "screen-256color"
-{{ end }}
-
 set -ag terminal-overrides ",alacritty:RGB"
+{{ end }}
 
 bind -T copy-mode-vi v send-keys -X begin-selection
 bind e set-window-option synchronize-panes

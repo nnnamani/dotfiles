@@ -1,3 +1,17 @@
+export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/bin:$PATH
+
+
+## Rust cargo
+export PATH="$HOME/.cargo/bin:$PATH"
+
+## Go
+{{ if eq .chezmoi.os "darwin" }}
+export PATH=/usr/local/bin:$HOME/go/bin:$PATH
+{{ end }}
+
+
+
 # history settings
 export HISTFILE=${HOME}/.zsh_history
 export HISTSIZE=1000
@@ -31,7 +45,6 @@ export ZPLUG_HOME=${HOME}/.zplug
 
 # Requirements: brew install zplug
 export ZPLUG_HOME=/usr/local/opt/zplug
-
 {{ end }}
 
 
@@ -53,13 +66,12 @@ autoload -U compinit
 compinit
 zstyle ':completion:*:default' menu select=1
 
-export PATH=$HOME/.local/bin:$PATH
 
 # asdf
 [ -f $HOME/.asdf/asdf.sh ] && . $HOME/.asdf/asdf.sh
 
-# Rust cargo
-export PATH="$HOME/.cargo/bin:$PATH"
+# rtx
+eval "$(rtx activate zsh)"
 
 # fzf select history
 function fzf-select-history() {
@@ -95,11 +107,6 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 alias port_num_filter="grep -E '^[0-9]+/' | awk -F'/' '{print $1}' | tr '\n' ',' | sed -e 's/,$//'";
 alias cdrepos='cd $(ghq list -p | fzf)'
 alias coderepo='code $(ghq list -p | fzf)'
-
-#
-# for Mac
-#
-export PATH=$PATH:/usr/local/bin:$HOME/go/bin
 
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
