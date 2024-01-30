@@ -73,7 +73,9 @@ zstyle ':completion:*:default' menu select=1
 [ -f $HOME/.asdf/asdf.sh ] && . $HOME/.asdf/asdf.sh
 
 # rtx
+{{ if eq .chezmoi.os "linux" }}
 eval "$(rtx activate zsh)"
+{{ end }}
 
 # fzf select history
 function fzf-select-history() {
