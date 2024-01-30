@@ -106,4 +106,10 @@ key_bindings:
   - { key: Slash,     mods: Control,   chars: "\x1f"                        } # Ctrl + /
   - { key: Apostrophe, mods: Control,  chars: "\x18\x40\x63\x27"            } # Ctrl + ''v
   - { key: LBracket,  mods: Control,   chars: "\x1b"                        } # Ctrl + [
+{{ if eq .chezmoi.os "linux" }}
+
+{{ else if eq .chezmoi.os "darwin" }}
+  - { key: Yen,                        chars: "\x5C"                        } # ¥マークでバックスラッシュ
+  - { key: Yen,      mods: Alt,        chars: "\xA5"                        }
+{{ end }}
 
