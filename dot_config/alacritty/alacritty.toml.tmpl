@@ -332,12 +332,12 @@ mods = "Control"
 
 [[keyboard.bindings]]
 chars = "\u001B`"
-key = "Grave"
+key = "Tab"
 mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001B~"
-key = "Grave"
+key = "Tab"
 mods = "Alt|Shift"
 
 [[keyboard.bindings]]
@@ -406,11 +406,6 @@ key = "Slash"
 mods = "Control"
 
 [[keyboard.bindings]]
-chars = "\u0018@c'"
-key = "Apostrophe"
-mods = "Control"
-
-[[keyboard.bindings]]
 chars = "\u001B"
 key = "LBracket"
 mods = "Control"
@@ -428,14 +423,13 @@ mods = "Alt"
 chars = "\u00A5"
 {{ end }}
 
-
 [shell]
-args = ["-l", "-c", "tmux a -t default || tmux new -s default"]
 {{ if eq .chezmoi.os "linux" }}
 program = "/usr/bin/zsh"
 {{ else if eq .chezmoi.os "darwin" }}
 program = "/bin/zsh"
 {{ end }}
+args = ["-l", "-c", "tmux a -t default || tmux new -s default"]
 
 [window]
 opacity = 0.9

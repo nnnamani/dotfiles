@@ -72,9 +72,10 @@ zstyle ':completion:*:default' menu select=1
 # asdf
 [ -f $HOME/.asdf/asdf.sh ] && . $HOME/.asdf/asdf.sh
 
-# rtx
+# mise(rtx)
 {{ if eq .chezmoi.os "linux" }}
-eval "$(rtx activate zsh)"
+eval "$($HOME/.local/bin/mise activate zsh)"
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 {{ end }}
 
 # fzf select history
