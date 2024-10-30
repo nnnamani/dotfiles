@@ -38,17 +38,16 @@ fi
 
 # zplug
 {{ if eq .chezmoi.os "linux" }}
-
 export ZPLUG_HOME=${HOME}/.zplug
-
 {{ else if eq .chezmoi.os "darwin" }}
-
-# Requirements: brew install zplug
+{{ $arch := output "uname" "-m" }}
+{{ if eq $arch "arm64\n" }}
+export ZPLUG_HOME=/opt/homebrew/opt/zplug
+{{ else }}
 export ZPLUG_HOME=/usr/local/opt/zplug
-PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
-
 {{ end }}
-
+PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
+{{ end }}
 
 source ${ZPLUG_HOME}/init.zsh
 
