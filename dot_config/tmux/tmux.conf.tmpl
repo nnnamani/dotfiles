@@ -28,6 +28,12 @@ bind e set-window-option synchronize-panes
 set-window-option -g mode-keys vi
 bind c new-window -c '#{pane_current_path}'
 
+# プレフィックス + - で水平分割
+bind - split-window -v
+
+# プレフィックス + | で垂直分割
+bind | split-window -h
+
 # enable mouse
 setw -g mouse on
 
