@@ -71,9 +71,9 @@ zstyle ':completion:*:default' menu select=1
 # asdf
 [ -f $HOME/.asdf/asdf.sh ] && . $HOME/.asdf/asdf.sh
 
-# mise(rtx)
-{{ if eq .chezmoi.os "linux" }}
-eval "$($HOME/.local/bin/mise activate zsh)"
+# mise(旧rtx)
+{{ if or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")}}
+eval "$($(which mise) activate zsh)"
 export PATH="$HOME/.local/share/mise/shims:$PATH"
 {{ end }}
 
