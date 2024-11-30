@@ -35,7 +35,7 @@ bind - split-window -v
 bind | split-window -h
 
 # enable mouse
-setw -g mouse on
+setw -g mouse off
 
 {{ if eq .chezmoi.os "darwin" }}
 run "${TMUX_PLUGIN_MANAGER_PATH}/tpm"
