@@ -410,6 +410,16 @@ chars = "\u001B"
 key = "LBracket"
 mods = "Control"
 
+[[keyboard.bindings]]
+key = "Up"
+mods = "Control|Shift"
+action = IncreaseFontSize
+
+[[keyboard.bindings]]
+key = "Down"
+mods = "Control|Shift"
+action = DecreaseFontSize
+
 {{ if eq .chezmoi.os "linux" }}
 
 {{ else if eq .chezmoi.os "darwin" }}
