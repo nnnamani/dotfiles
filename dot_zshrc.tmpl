@@ -72,9 +72,9 @@ zstyle ':completion:*:default' menu select=1
 [ -f $HOME/.asdf/asdf.sh ] && . $HOME/.asdf/asdf.sh
 
 # mise(旧rtx)
-{{ if or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin")}}
-eval "$($(which mise) activate zsh)"
-export PATH="$HOME/.local/share/mise/shims:$PATH"
+{{ if or (eq .chezmoi.os "linux") (eq .chezmoi.os "darwin") }}
+#eval "$($(which mise) activate zsh)"
+#export PATH="$HOME/.local/share/mise/shims:$PATH"
 {{ end }}
 
 # fzf select history
@@ -125,4 +125,15 @@ zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 zle -N fzf-select-history
 
+# Emacs
+function estart() {
+  if ! emacsclient -e 0 > /dev/null 2>&1; then
+    cd > /dev/null 2>&1
+    emacs --daemon
+    cd - > /dev/null 2>&1
+  fi
+}
 
+alias e='emacsclient -nw'
+alias ekill="emacsclient -e '(kill-emacs)'"
+alias erestart="emacsclient -e '(kill-emacs)' && estart"
