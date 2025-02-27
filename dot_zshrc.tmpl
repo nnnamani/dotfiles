@@ -3,6 +3,9 @@ export PATH=$HOME/bin:$PATH
 export PATH=$HOME/.roswell/bin:$PATH
 export PATH=$HOME/common-lisp/lem:$PATH
 
+{{ if eq .chezmoi.os "darwin" }}
+export PATH=$HOME/Library/Android/sdk/platform-tools:$PATH
+{{ end }}
 
 ## Rust cargo
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -139,4 +142,8 @@ function estart() {
 alias e='emacsclient -nw'
 alias ekill="emacsclient -e '(kill-emacs)'"
 alias erestart="emacsclient -e '(kill-emacs)' && estart"
+
+
+source "$(brew --prefix google-cloud-sdk)/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix google-cloud-sdk)/google-cloud-sdk/completion.zsh.inc"
 
