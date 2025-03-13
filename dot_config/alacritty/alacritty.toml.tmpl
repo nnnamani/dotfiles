@@ -413,27 +413,20 @@ mods = "Control"
 [[keyboard.bindings]]
 key = "Up"
 mods = "Control|Shift"
-action = IncreaseFontSize
+action = "IncreaseFontSize"
 
 [[keyboard.bindings]]
 key = "Down"
 mods = "Control|Shift"
-action = DecreaseFontSize
+action = "DecreaseFontSize"
 
 {{ if eq .chezmoi.os "linux" }}
 
 {{ else if eq .chezmoi.os "darwin" }}
-[[keyboard.bindings]]
-key = "Yen"
-chars = "\u005C"
 
-[[keyboard.bindings]]
-key = "Yen"
-mods = "Alt"
-chars = "\u00A5"
 {{ end }}
 
-[shell]
+[terminal.shell]
 {{ if eq .chezmoi.os "linux" }}
 program = "/usr/bin/zsh"
 {{ else if eq .chezmoi.os "darwin" }}
@@ -443,3 +436,5 @@ args = ["-l", "-c", "tmux a -t default || tmux new -s default"]
 
 [window]
 opacity = 0.9
+
+[terminal]
