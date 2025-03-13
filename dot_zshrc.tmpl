@@ -13,6 +13,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 ## Go
 {{ if eq .chezmoi.os "darwin" }}
 export PATH=/usr/local/bin:$HOME/go/bin:$PATH
+export PATH="/usr/local/sbin:$PATH"
 {{ end }}
 
 
