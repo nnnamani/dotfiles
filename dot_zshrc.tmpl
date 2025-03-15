@@ -3,6 +3,8 @@ export PATH=$HOME/bin:$PATH
 export PATH=$HOME/.roswell/bin:$PATH
 export PATH=$HOME/common-lisp/lem:$PATH
 
+export NIXPKGS_ALLOW_UNFREE=1
+
 {{ if eq .chezmoi.os "darwin" }}
 export PATH=$HOME/Library/Android/sdk/platform-tools:$PATH
 {{ end }}
