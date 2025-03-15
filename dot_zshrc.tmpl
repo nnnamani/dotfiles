@@ -145,6 +145,8 @@ alias ekill="emacsclient -e '(kill-emacs)'"
 alias erestart="emacsclient -e '(kill-emacs)' && estart"
 
 
-source "$(brew --prefix google-cloud-sdk)/google-cloud-sdk/path.zsh.inc"
-source "$(brew --prefix google-cloud-sdk)/google-cloud-sdk/completion.zsh.inc"
+#source "$(brew --prefix google-cloud-sdk)/google-cloud-sdk/path.zsh.inc"
+#source "$(brew --prefix google-cloud-sdk)/google-cloud-sdk/completion.zsh.inc"
+
+[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ] && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
