@@ -120,12 +120,79 @@ alias port_num_filter="grep -E '^[0-9]+/' | awk -F'/' '{print $1}' | tr '\n' ','
 alias cdrepos='cd $(ghq list -p | fzf)'
 alias coderepo='code $(ghq list -p | fzf)'
 
-# fzf
+# Modern CLI tools
+# Check if modern tools are available and set up aliases
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --color=always --group-directories-first'
+  alias ll='eza -l --color=always --group-directories-first'
+  alias la='eza -la --color=always --group-directories-first'
+  alias lt='eza -T --color=always --group-directories-first'
+  alias l.='eza -a | grep -E "^\."'
+fi
+
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --style=plain --paging=never'
+  alias batl='bat --style=numbers --paging=never'
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+  export BAT_THEME="Catppuccin-mocha"
+fi
+
+if command -v fd >/dev/null 2>&1; then
+  alias find='fd'
+fi
+
+if command -v delta >/dev/null 2>&1; then
+  export GIT_PAGER='delta'
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+  alias cd='z'
+  alias cdi='zi'
+fi
+
+if command -v dust >/dev/null 2>&1; then
+  alias du='dust'
+fi
+
+if command -v procs >/dev/null 2>&1; then
+  alias ps='procs'
+fi
+
+if command -v bottom >/dev/null 2>&1; then
+  alias top='btm'
+fi
+
+if command -v tldr >/dev/null 2>&1; then
+  alias help='tldr'
+fi
+
+# fzf with modern tools integration
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-#source /usr/local/Cellar/fzf/0.20.0/shell/completion.zsh
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+# Use fd with fzf if available, otherwise fall back to rg
+if command -v fd >/dev/null 2>&1; then
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+else
+  export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+fi
+
+# Catppuccin theme for fzf
+export FZF_DEFAULT_OPTS="
+  --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8
+  --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc
+  --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8
+  --height 40% --reverse --border --multi --cycle
+  --bind 'ctrl-a:select-all'
+  --bind 'ctrl-d:deselect-all'
+  --bind 'ctrl-t:toggle-all'"
+
+# Enhanced preview with bat if available
+if command -v bat >/dev/null 2>&1; then
+  export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+fi
 
 fpath=(~/.zsh/completion $fpath)
 zstyle ':completion:*:*:docker:*' option-stacking yes
