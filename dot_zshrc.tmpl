@@ -119,6 +119,7 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 alias port_num_filter="grep -E '^[0-9]+/' | awk -F'/' '{print $1}' | tr '\n' ',' | sed -e 's/,$//'";
 alias cdrepos='cd $(ghq list -p | fzf)'
 alias coderepo='code $(ghq list -p | fzf)'
+alias ccd='claude --dangerously-skip-permissions'
 
 # Modern CLI tools
 # Check if modern tools are available and set up aliases
