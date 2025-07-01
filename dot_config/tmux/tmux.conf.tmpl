@@ -36,6 +36,7 @@ unbind C-b
 
 # Auto-detect shell across platforms
 set-option -g default-shell $SHELL
+set-option -g default-command "exec $SHELL -l"
 
 # Platform-specific terminal settings
 {{ if eq .chezmoi.os "linux" }}
